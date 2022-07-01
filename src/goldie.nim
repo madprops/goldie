@@ -88,12 +88,13 @@ proc print_results(counter: int, results: seq[Result]) =
     for line in r.lines:
       echo &"{yellow}{line.number}{reset}: {line.text}"
 
-  echo ""   
+  echo ""  
 
-# Main function
-proc main() =
+# Get the query from the parameters
+# Can quit the program from here
+proc get_query(): string =
   if paramCount() < 1:
-    return
+    quit()
   
   var args: seq[string]
 
@@ -103,11 +104,14 @@ proc main() =
   let query = args.join(" ").strip
   
   if query == "":
-    return
+    quit()
   
-  let ans = get_results(query)
-  let counter = ans[0]
-  let results = ans[1]
+  return query
+
+# Main function
+proc main() =
+  let query = get_query()
+  let (counter, results) = get_results(query)
 
   # If results
   if counter > 0:
