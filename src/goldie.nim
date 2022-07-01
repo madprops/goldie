@@ -56,7 +56,7 @@ proc get_results(query: string): (int, seq[Result]) =
         n += 1
 
         if line.toLower.contains(q):
-          lines.add(Line(text: line.strip, number: n))
+          lines.add(Line(text: line.substr(0, 500).strip, number: n))
           counter += 1
       
       if lines.len > 0:
