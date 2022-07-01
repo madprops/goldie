@@ -9,6 +9,9 @@ let reset = ansiResetCode
 # Don't print huge lines
 let max_line_length = 250
 
+# Stop if many results
+let max_results = 100
+
 # Object for lines
 type Line = object
   text: string
@@ -29,42 +32,44 @@ proc get_results(query: string): (int, seq[Result]) =
   var all_results: seq[Result]
   var counter = 0
 
-  for path in walkDirRec(".", relative=true):
-    block on_path:
-      let components = path.split("/")
-      for c in components:
-        if c.startsWith("."): break on_path
+  block dirwalk:
+    for path in walkDirRec(".", relative=true):
+      block on_path:
+        let components = path.split("/")
+        for c in components:
+          if c.startsWith("."): break on_path
 
-      let info = getFileInfo(path)
-      if info.size == 0: continue
-      
-      let f = open(path)
-      var bytes: seq[uint8]
-      let blen = min(info.size, 512)
-      
-      for x in 0..<blen:
-        bytes.add(0)
-      
-      discard f.readBytes(bytes, 0, blen)
+        let info = getFileInfo(path)
+        if info.size == 0: continue
+        
+        let f = open(path)
+        var bytes: seq[uint8]
+        let blen = min(info.size, 512)
+        
+        for x in 0..<blen:
+          bytes.add(0)
+        
+        discard f.readBytes(bytes, 0, blen)
 
-      # Check if it's a binary file
-      for c in bytes:
-        if c == 0:
-          break on_path
-      
-      var lines: seq[Line]
-      var n = 0
+        # Check if it's a binary file
+        for c in bytes:
+          if c == 0:
+            break on_path
+        
+        var lines: seq[Line]
 
-      for line in readFile(path).split("\n"):
-        n += 1
-
-        if line.toLower.contains(q):
-          let text = line.strip.substr(0, max_line_length).strip
-          lines.add(Line(text: text, number: n))
-          counter += 1
-      
-      if lines.len > 0:
-        all_results.add(Result(path: path, lines: lines))
+        for i, line in readFile(path).split("\n").pairs():
+          if line.toLower.contains(q):
+            let text = line.strip.substr(0, max_line_length).strip
+            lines.add(Line(text: text, number: i + 1))
+            counter += 1
+            
+            if counter >= max_results:
+              all_results.add(Result(path: path, lines: lines))
+              break dirwalk
+        
+        if lines.len > 0:
+          all_results.add(Result(path: path, lines: lines))
   
   return (counter, all_results)
 
