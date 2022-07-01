@@ -30,7 +30,8 @@ proc result_string(n: int): string =
 proc valid_component(c: string): bool =
   let not_valid = c.startsWith(".") or 
   c == "node_modules" or 
-  c.contains("bundle")
+  c.contains("bundle") or
+  c.contains(".min.")
   return not not_valid
 
 # Find files recursively and check text
