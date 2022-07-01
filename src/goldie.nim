@@ -6,6 +6,9 @@ let green = ansiForegroundColorCode(fgGreen)
 let yellow = ansiForegroundColorCode(fgYellow)
 let reset = ansiResetCode
 
+# Don't print huge lines
+let max_line_length = 250
+
 # Object for lines
 type Line = object
   text: string
@@ -56,7 +59,8 @@ proc get_results(query: string): (int, seq[Result]) =
         n += 1
 
         if line.toLower.contains(q):
-          lines.add(Line(text: line.substr(0, 500).strip, number: n))
+          let text = line.strip.substr(0, max_line_length).strip
+          lines.add(Line(text: text, number: n))
           counter += 1
       
       if lines.len > 0:
