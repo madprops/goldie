@@ -26,6 +26,13 @@ type Result = object
 proc result_string(n: int): string =
   return if n == 1: "result" else: "results"  
 
+# Check if the path component is valid
+proc valid_component(c: string): bool =
+  let not_valid = c.startsWith(".") or 
+  c == "node_modules" or 
+  c.contains("bundle")
+  return not not_valid
+
 # Find files recursively and check text
 proc get_results(query: string): (int, seq[Result]) =
   let q = query.toLower
@@ -37,7 +44,7 @@ proc get_results(query: string): (int, seq[Result]) =
       block on_path:
         let components = path.split("/")
         for c in components:
-          if c.startsWith("."): break on_path
+          if not valid_component(c): break on_path
 
         let info = getFileInfo(path)
         if info.size == 0: continue
