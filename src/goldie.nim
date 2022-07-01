@@ -91,7 +91,12 @@ proc main() =
   for i in 1..paramCount():
     args.add(paramStr(i))
   
-  let ans = get_results(args.join(" "))
+  let query = args.join(" ").strip
+  
+  if query == "":
+    return
+  
+  let ans = get_results(query)
   let counter = ans[0]
   let results = ans[1]
 
