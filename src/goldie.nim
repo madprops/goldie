@@ -28,7 +28,7 @@ proc result_string(n: int): string =
 
 # Check if the path component is valid
 proc valid_component(c: string): bool =
-  let not_valid = c.startsWith(".") or 
+  let not_valid = c == ".git" or 
   c == "node_modules" or 
   c.contains("bundle") or
   c.contains(".min.")
