@@ -7,7 +7,7 @@ let yellow = ansiForegroundColorCode(fgYellow)
 let reset = ansiResetCode
 
 # Don't print huge lines
-let max_line_length = 250
+let max_line_length = 200
 
 # Stop if many results
 let max_results = 100
@@ -71,13 +71,15 @@ proc get_results(query: string): (int, seq[Result]) =
             let text = line.strip.substr(0, max_line_length).strip
             lines.add(Line(text: text, number: i + 1))
             counter += 1
-            
+
             if counter >= max_results:
-              all_results.add(Result(path: path, lines: lines))
-              break dirwalk
+              break
         
         if lines.len > 0:
           all_results.add(Result(path: path, lines: lines))
+
+        # If results are full end the function
+        if counter >= max_results: break dirwalk
   
   return (counter, all_results)
 
