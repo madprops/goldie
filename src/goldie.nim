@@ -36,7 +36,6 @@ proc valid_component(c: string): bool =
 
 # Find files recursively and check text
 proc get_results(query: string): (int, seq[Result]) =
-  let q = query.toLower
   var all_results: seq[Result]
   var counter = 0
 
@@ -67,7 +66,7 @@ proc get_results(query: string): (int, seq[Result]) =
         var lines: seq[Line]
 
         for i, line in readFile(path).split("\n").pairs():
-          if line.toLower.contains(q):
+          if line.contains(query):
             counter += 1
             let text = line.strip.substr(0, max_line_length).strip
             lines.add(Line(text: text, number: i + 1))
