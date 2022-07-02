@@ -68,12 +68,10 @@ proc get_results(query: string): (int, seq[Result]) =
 
         for i, line in readFile(path).split("\n").pairs():
           if line.toLower.contains(q):
+            counter += 1
             let text = line.strip.substr(0, max_line_length).strip
             lines.add(Line(text: text, number: i + 1))
-            counter += 1
-
-            if counter >= max_results:
-              break
+            if counter >= max_results:break
         
         if lines.len > 0:
           all_results.add(Result(path: path, lines: lines))
