@@ -101,6 +101,7 @@ proc print_results(counter: int, results: seq[Result]) =
 # Can quit the program from here
 proc get_query(): string =
   if paramCount() < 1:
+    echo "goldie: Provide a query to search inside files"
     quit()
   
   var args: seq[string]
