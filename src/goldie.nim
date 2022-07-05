@@ -49,7 +49,13 @@ proc get_results(query: string): (int, seq[Result]) =
         for c in components:
           if not valid_component(c): break on_path
 
-        let info = getFileInfo(path)
+        var info: FileInfo
+
+        try:
+          info = getFileInfo(path)
+        except:
+          continue
+
         if info.size == 0: continue
         
         let f = open(path)
@@ -125,12 +131,12 @@ proc main() =
   
   let time_start = getMonoTime()
   let (counter, results) = get_results(query)
-  let time_end = getMonoTime()
-  let duration = time_end - time_start
-  let ms = duration.inNanoSeconds.float / 1_000_000
 
   # If results
   if counter > 0:
+    let time_end = getMonoTime()
+    let duration = time_end - time_start
+    let ms = duration.inNanoSeconds.float / 1_000_000
     print_results(counter, results, ms)
 
 # Starts here
