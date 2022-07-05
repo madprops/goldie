@@ -43,7 +43,7 @@ proc get_results(query: string): (int, seq[Result]) =
   var counter = 0
 
   block dirwalk:
-    for path in walkDirRec(".", relative=true):
+    for path in walkDirRec(".", relative = true):
       block on_path:
         let components = path.split("/")
         for c in components:
@@ -54,11 +54,17 @@ proc get_results(query: string): (int, seq[Result]) =
         try:
           info = getFileInfo(path)
         except:
-          continue
+          break on_path
 
-        if info.size == 0: continue
+        if info.size == 0: break on_path
         
-        let f = open(path)
+        var f: File
+
+        try:
+          f = open(path)
+        except:
+          break on_path
+
         var bytes: seq[uint8]
         let blen = min(info.size, 512)
         
@@ -79,7 +85,7 @@ proc get_results(query: string): (int, seq[Result]) =
         try:
           text = readFile(path)
         except:
-          continue
+          break on_path
 
         for i, line in text.split("\n").pairs():
           if line.contains(query):
