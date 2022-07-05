@@ -5,6 +5,7 @@ let blue = ansiForegroundColorCode(fgBlue)
 let green = ansiForegroundColorCode(fgGreen)
 let yellow = ansiForegroundColorCode(fgYellow)
 let underscore = ansiStyleCode(styleUnderscore)
+let bold = ansiStyleCode(styleBright)
 let reset = ansiResetCode
 
 let
@@ -113,7 +114,7 @@ proc print_results(counter: int, results: seq[Result], duration: float) =
     # Print header
     let
       rs = result_string(r.lines.len)
-      header = &"\n{underscore}{r.lines.len} {rs} in {green}{r.path}{reset}"
+      header = &"\n{bold}{green}{r.path}{reset}"
 
     echo header 
 
