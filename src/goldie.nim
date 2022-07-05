@@ -108,6 +108,8 @@ proc get_results(query: string): (int, seq[Result]) =
 # Print the results
 proc print_results(counter: int, results: seq[Result], duration: float) =
   let rs = result_string(counter)
+  let width = terminalWidth()
+  let result_width = width + yellow.len + reset.len - 2
   
   for r in results:
     # Print header
@@ -119,7 +121,8 @@ proc print_results(counter: int, results: seq[Result], duration: float) =
 
     # Print lines
     for line in r.lines:
-      echo &"{yellow}{line.number}{reset}: {line.text}"
+      let s = &"{yellow}{line.number}{reset}: {line.text}"
+      echo s.substr(0, result_width)
 
   let d = duration.formatFloat(ffDecimal, 2)
   echo &"\n{blue}Found {counter} {rs} in {d} ms{reset}\n"  
