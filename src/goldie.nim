@@ -74,7 +74,14 @@ proc get_results(query: string): (int, seq[Result]) =
         
         var lines: seq[Line]
 
-        for i, line in readFile(path).split("\n").pairs():
+        var text: string
+
+        try:
+          text = readFile(path)
+        except:
+          continue
+
+        for i, line in text.split("\n").pairs():
           if line.contains(query):
             counter += 1
             let text = line.strip.substr(0, max_line_length).strip
