@@ -1,4 +1,4 @@
-import std/[os, strutils, strformat, terminal, times]
+import std/[os, strutils, strformat, terminal, times, monotimes]
 
 # Terminal ANSI Codes
 let blue = ansiForegroundColorCode(fgBlue)
@@ -123,14 +123,15 @@ proc get_query(): string =
 proc main() =
   let query = get_query()
   
-  let time_start = cpuTime()
+  let time_start = getMonoTime()
   let (counter, results) = get_results(query)
-  let time_end = cpuTime()
-  let duration = (time_end - time_start) * 1000
+  let time_end = getMonoTime()
+  let duration = time_end - time_start
+  let ms = duration.inNanoSeconds.float / 1_000_000
 
   # If results
   if counter > 0:
-    print_results(counter, results, duration)
+    print_results(counter, results, ms)
 
 # Starts here
 when isMainModule:
