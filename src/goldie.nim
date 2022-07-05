@@ -1,9 +1,10 @@
-import std/[os, strutils, strformat, terminal]
+import std/[os, strutils, strformat, terminal, times]
 
 # Terminal ANSI Codes
 let blue = ansiForegroundColorCode(fgBlue)
 let green = ansiForegroundColorCode(fgGreen)
 let yellow = ansiForegroundColorCode(fgYellow)
+let underscore = ansiStyleCode(styleUnderscore)
 let reset = ansiResetCode
 
 # Don't print huge lines
@@ -83,21 +84,21 @@ proc get_results(query: string): (int, seq[Result]) =
   return (counter, all_results)
 
 # Print the results
-proc print_results(counter: int, results: seq[Result]) =
+proc print_results(counter: int, results: seq[Result], duration: float) =
   let rs = result_string(counter)
-  echo &"\n{blue}Found {counter} {rs}{reset}"
-
+  
   for r in results:
     # Print header
     let rs = result_string(r.lines.len)
-    let header = &"\n< {r.lines.len} {rs} in {green}{r.path}{reset} >"    
+    let header = &"\n{underscore}{r.lines.len} {rs} in {green}{r.path}{reset}"
     echo header 
 
     # Print lines
     for line in r.lines:
       echo &"{yellow}{line.number}{reset}: {line.text}"
 
-  echo ""  
+  let d = duration.formatFloat(ffDecimal, 2)
+  echo &"\n{blue}Found {counter} {rs} in {d} ms{reset}\n"  
 
 # Get the query from the parameters
 # Can quit the program from here
@@ -121,11 +122,15 @@ proc get_query(): string =
 # Main function
 proc main() =
   let query = get_query()
+  
+  let time_start = cpuTime()
   let (counter, results) = get_results(query)
+  let time_end = cpuTime()
+  let duration = (time_end - time_start) * 1000
 
   # If results
   if counter > 0:
-    print_results(counter, results)
+    print_results(counter, results, duration)
 
 # Starts here
 when isMainModule:
