@@ -40,7 +40,7 @@ proc valid_component(c: string): bool =
   return not not_valid
 
 # Find files recursively and check text
-proc get_results(query: string): (int, seq[Result]) =
+proc get_results(query: string): seq[Result] =
   var
     all_results: seq[Result]
     counter = 0
@@ -96,7 +96,7 @@ proc get_results(query: string): (int, seq[Result]) =
             counter += 1
             let text = line.strip.substr(0, max_line_length).strip
             lines.add(Line(text: text, number: i + 1))
-            if counter >= max_results:break
+            if counter >= max_results: break
         
         if lines.len > 0:
           all_results.add(Result(path: path, lines: lines))
@@ -104,11 +104,12 @@ proc get_results(query: string): (int, seq[Result]) =
         # If results are full end the function
         if counter >= max_results: break dirwalk
   
-  return (counter, all_results)
+  return all_results
 
 # Print the results
-proc print_results(counter: int, results: seq[Result], duration: float) =
+proc print_results(results: seq[Result], duration: float) =
   let result_width = terminalWidth() + yellow.len + reset.len - 2
+  var counter = 0
 
   for r in results:
     # Print header
@@ -122,6 +123,8 @@ proc print_results(counter: int, results: seq[Result], duration: float) =
     for line in r.lines:
       let s = &"{yellow}{line.number}{reset}: {line.text}"
       echo s.substr(0, result_width)
+    
+    counter += r.lines.len
 
   let
     rs = result_string(counter)
@@ -153,16 +156,16 @@ proc main() =
   let
     query = get_query()
     time_start = getMonoTime()
-    (counter, results) = get_results(query)
+    results = get_results(query)
 
-  # If results
-  if counter > 0:
+  # If any result
+  if results.len > 0:
     let
       time_end = getMonoTime()
       duration = time_end - time_start
       ms = duration.inNanoSeconds.float / 1_000_000
 
-    print_results(counter, results, ms)
+    print_results(results, ms)
 
 # Starts here
 when isMainModule:
