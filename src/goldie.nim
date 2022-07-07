@@ -47,7 +47,7 @@ proc get_results(query: string): seq[Result] =
     counter = 0
 
   block dirwalk:
-    for path in walkDirRec(".", relative = true):
+    for path in walkDirRec(conf().path, relative = true):
       block on_path:
         for e in conf().exclude:
           if path.contains(e): break on_path
@@ -55,10 +55,11 @@ proc get_results(query: string): seq[Result] =
         for c in path.split("/"):
           if not valid_component(c): break on_path
 
+        let full_path = joinPath(conf().path, path)
         var info: FileInfo
 
         try:
-          info = getFileInfo(path)
+          info = getFileInfo(full_path)
         except:
           break on_path
 
@@ -67,7 +68,7 @@ proc get_results(query: string): seq[Result] =
         var f: File
 
         try:
-          f = open(path)
+          f = open(full_path)
         except:
           break on_path
 
@@ -89,7 +90,7 @@ proc get_results(query: string): seq[Result] =
           text: string
 
         try:
-          text = readFile(path)
+          text = readFile(full_path)
         except:
           break on_path
 
@@ -108,7 +109,8 @@ proc get_results(query: string): seq[Result] =
             if counter >= max_results: break
         
         if lines.len > 0:
-          all_results.add(Result(path: path, lines: lines))
+          let p = if conf().absolute: full_path else: path
+          all_results.add(Result(path: p, lines: lines))
 
         # If results are full end the function
         if counter >= max_results: break dirwalk
