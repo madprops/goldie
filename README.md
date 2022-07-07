@@ -2,6 +2,8 @@
 
 Find text in files, recursively.  
 Simply provide a query.  
-There are no flags or config.  
 There's an install script that places it in ~/bin.  
 It tries to smartly ignore some files.
+
+Flags:
+

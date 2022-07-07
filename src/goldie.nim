@@ -1,4 +1,5 @@
 import std/[os, strutils, strformat, terminal, times, monotimes]
+import config
 
 # Terminal ANSI Codes
 let blue = ansiForegroundColorCode(fgBlue)
@@ -31,16 +32,16 @@ proc result_string(n: int): string =
 
 # Check if the path component is valid
 proc valid_component(c: string): bool =
-  let not_valid = c == ".git" or 
-  c == ".svn" or 
+  let not_valid = c.startsWith(".") or 
   c == "node_modules" or 
-  c == ".mypy_cache" or 
   c.contains(".bundle.") or
   c.contains(".min.")
   return not not_valid
 
 # Find files recursively and check text
 proc get_results(query: string): seq[Result] =
+  let low_query = query.tolower
+
   var
     all_results: seq[Result]
     counter = 0
@@ -48,9 +49,10 @@ proc get_results(query: string): seq[Result] =
   block dirwalk:
     for path in walkDirRec(".", relative = true):
       block on_path:
-        let components = path.split("/")
-        
-        for c in components:
+        for e in conf().exclude:
+          if path.contains(e): break on_path
+
+        for c in path.split("/"):
           if not valid_component(c): break on_path
 
         var info: FileInfo
@@ -92,7 +94,14 @@ proc get_results(query: string): seq[Result] =
           break on_path
 
         for i, line in text.split("\n").pairs():
-          if line.contains(query):
+          var matched = false
+
+          if conf().case_insensitive:
+            matched = line.tolower.contains(low_query)
+          else:
+            matched = line.contains(query)
+
+          if matched:
             counter += 1
             let text = line.strip.substr(0, max_line_length).strip
             lines.add(Line(text: text, number: i + 1))
@@ -132,31 +141,13 @@ proc print_results(results: seq[Result], duration: float) =
     
   echo &"\n{blue}Found {counter} {rs} in {d} ms{reset}\n"  
 
-# Get the query from the parameters
-# Can quit the program from here
-proc get_query(): string =
-  if paramCount() < 1:
-    echo "goldie: Provide a query to search inside files"
-    quit()
-  
-  var args: seq[string]
-
-  for i in 1..paramCount():
-    args.add(paramStr(i))
-  
-  let query = args.join(" ").strip
-  
-  if query == "":
-    quit()
-  
-  return query
-
 # Main function
 proc main() =
+  get_config()
+
   let
-    query = get_query()
     time_start = getMonoTime()
-    results = get_results(query)
+    results = get_results(conf().query)
 
   # If any result
   if results.len > 0:

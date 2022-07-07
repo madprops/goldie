@@ -11,3 +11,4 @@ bin           = @["goldie"]
 # Dependencies
 
 requires "nim >= 1.6.6"
+requires "nap >= 3.0.0"
