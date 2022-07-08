@@ -6,6 +6,3 @@ Find text in files, recursively.
 Simply provide a query.  
 There's an install script that places it in ~/bin.  
 It tries to smartly ignore some files.
-
-Flags:
-
