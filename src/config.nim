@@ -22,7 +22,8 @@ type Config* = ref object
   exclude*: seq[string]
   case_insensitive*: bool
   piped*: bool
-  clean*: bool  
+  clean*: bool
+  max_results*: int
 
 var oconf*: Config
 
@@ -34,6 +35,7 @@ proc get_config*() =
     exclude = add_arg(name="exclude", kind="value", multiple=true, help="String to exclude", alt="e")
     case_insensitive = add_arg(name="case-insensitive", kind="flag", help="Perform a case insensitive search", alt="i")
     clean = add_arg(name="clean", kind="flag", help="Print a clean list without formatting", alt="c")
+    max_results = add_arg(name="max-results", kind="value", value="100", help="Max results to show", alt="m")
 
   add_header("Search content of files recursively")
   add_header(&"Version: {version}")
@@ -41,13 +43,14 @@ proc get_config*() =
   parse_args()
 
   oconf = Config(
-    query: query.value,
     path: resolve_dir(path.value),
+    piped: not isatty(stdout),
+    query: query.value,
     absolute: absolute.used,
     exclude: exclude.values,
     case_insensitive: case_insensitive.used ,
     clean: clean.used,
-    piped: not isatty(stdout)    
+    max_results: max_results.get_int
   )
 
 proc conf*(): Config =

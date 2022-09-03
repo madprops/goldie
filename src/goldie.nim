@@ -9,11 +9,7 @@ let underscore = ansiStyleCode(styleUnderscore)
 let bold = ansiStyleCode(styleBright)
 let reset = ansiResetCode
 
-let
-  # Don't print huge lines
-  max_line_length = 200
-  # Stop if many results
-  max_results = 100
+let max_line_length = 200
 
 type
   # Object for lines
@@ -106,14 +102,14 @@ proc get_results(query: string): seq[Result] =
             counter += 1
             let text = line.strip.substr(0, max_line_length).strip
             lines.add(Line(text: text, number: i + 1))
-            if counter >= max_results: break
+            if counter >= conf().max_results: break
         
         if lines.len > 0:
           let p = if conf().absolute: full_path else: path
           all_results.add(Result(path: p, lines: lines))
 
         # If results are full end the function
-        if counter >= max_results: break dirwalk
+        if counter >= conf().max_results: break dirwalk
   
   return all_results
 
