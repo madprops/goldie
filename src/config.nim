@@ -29,7 +29,7 @@ var oconf*: Config
 
 proc get_config*() =
   let
-    query = add_arg(name="query", kind="argument", required=true, help="Path to a directory")
+    query = add_arg(name="query", kind="argument", required=true, help="Text query to match")
     path = add_arg(name="path", kind="value", value=".", help="Path to a directory", alt="p")
     absolute = add_arg(name="absolute", kind="flag", help="Show full paths", alt="a")
     exclude = add_arg(name="exclude", kind="value", multiple=true, help="String to exclude", alt="e")
