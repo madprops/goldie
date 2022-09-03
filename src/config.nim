@@ -1,4 +1,4 @@
-import std/[os, strformat]
+import std/[os, strformat, terminal]
 import pkg/[nap]
 
 let version = "0.1.0"
@@ -21,6 +21,8 @@ type Config* = ref object
   absolute*: bool
   exclude*: seq[string]
   case_insensitive*: bool
+  piped*: bool
+  clean*: bool  
 
 var oconf*: Config
 
@@ -31,6 +33,7 @@ proc get_config*() =
     absolute = add_arg(name="absolute", kind="flag", help="Show full paths", alt="a")
     exclude = add_arg(name="exclude", kind="value", multiple=true, help="String to exclude", alt="e")
     case_insensitive = add_arg(name="case-insensitive", kind="flag", help="Perform a case insensitive search", alt="i")
+    clean = add_arg(name="clean", kind="flag", help="Print a clean list without formatting", alt="c")
 
   add_header("Search content of files recursively")
   add_header(&"Version: {version}")
@@ -42,7 +45,9 @@ proc get_config*() =
     path: resolve_dir(path.value),
     absolute: absolute.used,
     exclude: exclude.values,
-    case_insensitive: case_insensitive.used 
+    case_insensitive: case_insensitive.used ,
+    clean: clean.used,
+    piped: not isatty(stdout)    
   )
 
 proc conf*(): Config =

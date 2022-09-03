@@ -119,29 +119,42 @@ proc get_results(query: string): seq[Result] =
 
 # Print the results
 proc print_results(results: seq[Result], duration: float) =
+  let format = not conf().piped and not conf().clean
   let result_width = terminalWidth() + yellow.len + reset.len - 2
   var counter = 0
 
-  for r in results:
+  for i, r in results:
     # Print header
-    let
-      rs = result_string(r.lines.len)
-      header = &"\n{bold}{green}{r.path}{reset}"
+    let rs = result_string(r.lines.len)
+    
+    let header = if format:
+      &"\n{bold}{green}{r.path}{reset}"
+    else:
+      if i == 0:
+        r.path
+      else:
+        &"\n{r.path}"
 
     echo header 
 
     # Print lines
     for line in r.lines:
-      let s = &"{yellow}{line.number}{reset}: {line.text}"
-      echo s.substr(0, result_width)
+      let s = if format:
+        let s0 = &"{yellow}{line.number}{reset}: {line.text}"
+        s0.substr(0, result_width)
+      else:
+        &"{line.number}: {line.text}"
+      
+      echo s
     
     counter += r.lines.len
 
   let
     rs = result_string(counter)
     d = duration.formatFloat(ffDecimal, 2)
-    
-  echo &"\n{blue}Found {counter} {rs} in {d} ms{reset}\n"  
+  
+  if format:
+    echo &"\n{blue}Found {counter} {rs} in {d} ms{reset}\n"  
 
 # Main function
 proc main() =
