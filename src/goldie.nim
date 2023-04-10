@@ -30,6 +30,7 @@ proc result_string(n: int): string =
 proc valid_component(c: string): bool =
   let not_valid = c.startsWith(".") or 
   c == "node_modules" or 
+  c == "package-lock.json" or 
   c.contains(".bundle.") or
   c.contains(".min.")
   return not not_valid
