@@ -117,7 +117,6 @@ proc get_results(query: string): seq[Result] =
 # Print the results
 proc print_results(results: seq[Result], duration: float) =
   let format = not conf().piped and not conf().clean
-  let result_width = terminalWidth() + yellow.len + reset.len - 2
   let reg = re(&"(?i)({conf().query})")
   var counter = 0
 
@@ -143,8 +142,7 @@ proc print_results(results: seq[Result], duration: float) =
         if conf().highlight:
           text = nre.replace(text, reg, (r: string) => &"{reverse}{r}{reset}")
 
-        text = &"{yellow}{line.number}{reset}: {text}"
-        text.substr(0, result_width)
+        &"{yellow}{line.number}{reset}: {text}"
       else:
         &"{line.number}: {line.text}"
       
