@@ -23,6 +23,7 @@ type Config* = ref object
   case_insensitive*: bool
   piped*: bool
   clean*: bool
+  highlight*: bool
   max_results*: int
 
 var oconf*: Config
@@ -35,6 +36,7 @@ proc get_config*() =
     exclude = add_arg(name="exclude", kind="value", multiple=true, help="String to exclude", alt="e")
     case_insensitive = add_arg(name="case-insensitive", kind="flag", help="Perform a case insensitive search", alt="i")
     clean = add_arg(name="clean", kind="flag", help="Print a clean list without formatting", alt="c")
+    no_highlight = add_arg(name="no-highlight", kind="flag", help="Don't highlight matches", alt="h")
     max_results = add_arg(name="max-results", kind="value", value="100", help="Max results to show", alt="m")
 
   add_header("Search content of files recursively")
@@ -50,6 +52,7 @@ proc get_config*() =
     exclude: exclude.values,
     case_insensitive: case_insensitive.used ,
     clean: clean.used,
+    highlight: not no_highlight.used,
     max_results: max_results.get_int
   )
 

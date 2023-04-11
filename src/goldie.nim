@@ -1,11 +1,11 @@
-import std/[os, strutils, strformat, terminal, times, monotimes]
+import std/[os, strutils, strformat, terminal, times, monotimes, nre, sugar]
 import config
 
 # Terminal ANSI Codes
 let blue = ansiForegroundColorCode(fgBlue)
 let green = ansiForegroundColorCode(fgGreen)
 let yellow = ansiForegroundColorCode(fgYellow)
-let underscore = ansiStyleCode(styleUnderscore)
+let reverse = ansiStyleCode(styleReverse)
 let bold = ansiStyleCode(styleBright)
 let reset = ansiResetCode
 
@@ -118,6 +118,7 @@ proc get_results(query: string): seq[Result] =
 proc print_results(results: seq[Result], duration: float) =
   let format = not conf().piped and not conf().clean
   let result_width = terminalWidth() + yellow.len + reset.len - 2
+  let reg = re(&"(?i)({conf().query})")
   var counter = 0
 
   for i, r in results:
@@ -137,8 +138,13 @@ proc print_results(results: seq[Result], duration: float) =
     # Print lines
     for line in r.lines:
       let s = if format:
-        let s0 = &"{yellow}{line.number}{reset}: {line.text}"
-        s0.substr(0, result_width)
+        var text = line.text
+
+        if conf().highlight:
+          text = nre.replace(text, reg, (r: string) => &"{reverse}{r}{reset}")
+
+        text = &"{yellow}{line.number}{reset}: {text}"
+        text.substr(0, result_width)
       else:
         &"{line.number}: {line.text}"
       
