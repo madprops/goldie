@@ -117,7 +117,8 @@ proc get_results(query: string): seq[Result] =
 # Print the results
 proc print_results(results: seq[Result], duration: float) =
   let format = not conf().piped and not conf().clean
-  let reg = re(&"(?i)({conf().query})")
+  let query = escapeRe(conf().query)
+  let reg = re(&"(?i)({query})")
   var counter = 0
 
   for i, r in results:
