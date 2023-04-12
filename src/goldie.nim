@@ -24,15 +24,16 @@ type
 
 # Result or Results
 proc result_string(n: int): string =
-  return if n == 1: "result" else: "results"  
+  return if n == 1: "result" else: "results"
 
 # Check if the path component is valid
 proc valid_component(c: string): bool =
-  let not_valid = c.startsWith(".") or 
-  c == "node_modules" or 
-  c == "package-lock.json" or 
+  let not_valid = c.startsWith(".") or
+  c == "node_modules" or
+  c == "package-lock.json" or
   c.contains(".bundle.") or
-  c.contains(".min.")
+  c.contains(".min.") or
+  c.contains("LICENSE")
   return not not_valid
 
 # Find files recursively and check text
@@ -61,7 +62,7 @@ proc get_results(query: string): seq[Result] =
           break on_path
 
         if info.size == 0: break on_path
-        
+
         var f: File
 
         try:
@@ -71,17 +72,17 @@ proc get_results(query: string): seq[Result] =
 
         var bytes: seq[uint8]
         let blen = min(info.size, 512)
-        
+
         for x in 0..<blen:
           bytes.add(0)
-        
+
         discard f.readBytes(bytes, 0, blen)
 
         # Check if it's a binary file
         for c in bytes:
           if c == 0:
             break on_path
-        
+
         var
           lines: seq[Line]
           text: string
@@ -104,14 +105,14 @@ proc get_results(query: string): seq[Result] =
             let text = line.strip.substr(0, max_line_length).strip
             lines.add(Line(text: text, number: i + 1))
             if counter >= conf().max_results: break
-        
+
         if lines.len > 0:
           let p = if conf().absolute: full_path else: path
           all_results.add(Result(path: p, lines: lines))
 
         # If results are full end the function
         if counter >= conf().max_results: break dirwalk
-  
+
   return all_results
 
 # Print the results
@@ -124,7 +125,7 @@ proc print_results(results: seq[Result], duration: float) =
   for i, r in results:
     # Print header
     let rs = result_string(r.lines.len)
-    
+
     let header = if format:
       &"\n{bold}{green}{r.path}{reset}"
     else:
@@ -133,7 +134,7 @@ proc print_results(results: seq[Result], duration: float) =
       else:
         &"\n{r.path}"
 
-    echo header 
+    echo header
 
     # Print lines
     for line in r.lines:
@@ -146,17 +147,17 @@ proc print_results(results: seq[Result], duration: float) =
         &"{yellow}{line.number}{reset}: {text}"
       else:
         &"{line.number}: {line.text}"
-      
+
       echo s
-    
+
     counter += r.lines.len
 
   let
     rs = result_string(counter)
     d = duration.formatFloat(ffDecimal, 2)
-  
+
   if format:
-    echo &"\n{blue}Found {counter} {rs} in {d} ms{reset}\n"  
+    echo &"\n{blue}Found {counter} {rs} in {d} ms{reset}\n"
 
 # Main function
 proc main() =

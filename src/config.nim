@@ -8,11 +8,11 @@ proc resolve_dir(path: string): string =
     getCurrentDir()
   else:
     expandTilde(path)
-  
+
   if not dirExists(rpath):
     echo "Path does not exist."
     quit(1)
-  
+
   return rpath
 
 type Config* = ref object
