@@ -31,9 +31,10 @@ proc valid_component(c: string): bool =
   let not_valid = c.startsWith(".") or
   c == "node_modules" or
   c == "package-lock.json" or
+  c == "LICENSE" or
+  c == "LICENSE.md" or
   c.contains(".bundle.") or
-  c.contains(".min.") or
-  c.contains("LICENSE")
+  c.contains(".min.")
   return not not_valid
 
 # Find files recursively and check text
