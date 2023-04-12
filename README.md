@@ -13,3 +13,11 @@ It's opiniated and ignores some files:
 ---
 
 I made this because the tool I used failed to find stuff sometimes.
+
+---
+
+Flags can be combined.
+
+Arguments that receive a value must be used wtih `=`.
+
+![](https://i.imgur.com/2DG5M0k.jpg)
