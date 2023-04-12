@@ -1,8 +1,10 @@
-<img src="https://i.imgur.com/oa07It1.jpg" width="350">
-
-<img src="https://i.imgur.com/I7y0jVD.jpg" width="350">
-
 Finds text in files, recursively. Simply provide a query.
+
+![](https://i.imgur.com/BLN3VTM.jpg)
+
+![](https://i.imgur.com/GrCC9Kc.jpg)
+
+---
 
 It's opiniated and ignores some files:
 
