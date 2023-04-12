@@ -1,6 +1,6 @@
-<img src="https://i.imgur.com/oa07It1.jpg" width="280">
+<img src="https://i.imgur.com/oa07It1.jpg" width="350">
 
-<img src="https://i.imgur.com/I7y0jVD.jpg" width="280">
+<img src="https://i.imgur.com/I7y0jVD.jpg" width="350">
 
 Finds text in files, recursively. Simply provide a query.
 
