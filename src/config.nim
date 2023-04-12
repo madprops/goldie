@@ -33,7 +33,7 @@ proc get_config*() =
     query = add_arg(name="query", kind="argument", required=true, help="Text query to match")
     path = add_arg(name="path", kind="value", value=".", help="Path to a directory", alt="p")
     absolute = add_arg(name="absolute", kind="flag", help="Show full paths", alt="a")
-    exclude = add_arg(name="exclude", kind="value", multiple=true, help="String to exclude", alt="e")
+    exclude = add_arg(name="exclude", kind="value", multiple=true, help="Exclude path if it contains this string", alt="e")
     case_insensitive = add_arg(name="case-insensitive", kind="flag", help="Perform a case insensitive search", alt="i")
     clean = add_arg(name="clean", kind="flag", help="Print a clean list without formatting", alt="c")
     no_highlight = add_arg(name="no-highlight", kind="flag", help="Don't highlight matches", alt="h")
