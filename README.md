@@ -1,5 +1,7 @@
 Finds text in files, recursively. Simply provide a query.
 
+It's on the [AUR](https://aur.archlinux.org/packages/goldie-git).
+
 ![](https://i.imgur.com/BLN3VTM.jpg)
 
 ![](https://i.imgur.com/GrCC9Kc.jpg)
