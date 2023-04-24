@@ -1,2 +1,0 @@
-- name: Setup Nim environment
-  uses: jiro4989/setup-nim-action@v1.1.4
