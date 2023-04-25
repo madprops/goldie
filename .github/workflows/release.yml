@@ -9,9 +9,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      -name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
-      -name: Setup Nim
+      - name: Setup Nim
         uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ env.NIM_VERSION }}
