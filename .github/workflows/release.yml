@@ -18,7 +18,7 @@ jobs:
       - name: Build
         run: nimble build -d:release -y
       - name: Create Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/upload-artifact@v2
         with:
           name: linux-binary
           path: ${{ env.APP_NAME }}
