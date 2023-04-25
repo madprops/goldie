@@ -1,0 +1,24 @@
+name: Create binary on release
+on:
+  release:
+    types: [created]
+env:
+  APP_NAME: 'goldie'
+  NIM_VERSION: '1.6.10'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -name: Checkout
+        - uses: actions/checkout@v3
+      -name: Setup Nim
+        - uses: jiro4989/setup-nim-action@v1
+          with:
+            nim-version: ${{ env.NIM_VERSION }}
+      - name: Build
+        run: nimble build -d:release -y
+      - name: Create Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: linux-binary
+          path: ${{ env.APP_NAME }}
