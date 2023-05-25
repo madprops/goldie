@@ -8,7 +8,6 @@ let yellow = ansiForegroundColorCode(fgYellow)
 let reverse = ansiStyleCode(styleReverse)
 let bold = ansiStyleCode(styleBright)
 let reset = ansiResetCode
-
 let max_line_length = 200
 
 type
@@ -40,6 +39,12 @@ proc valid_component(c: string): bool =
 # Find files recursively and check text
 proc get_results(query: string): seq[Result] =
   let low_query = query.tolower
+  var use_regex = false
+  var reg = re("")
+
+  if query.len > 2 and query.startsWith("/") and query.endsWith("/"):
+    use_regex = true
+    reg = re(query[1..^2])
 
   var
     all_results: seq[Result]
@@ -96,10 +101,13 @@ proc get_results(query: string): seq[Result] =
         for i, line in text.split("\n").pairs():
           var matched = false
 
-          if conf().case_insensitive:
-            matched = line.tolower.contains(low_query)
+          if use_regex:
+            matched = nre.find(line, reg).isSome
           else:
-            matched = line.contains(query)
+            if conf().case_insensitive:
+              matched = line.tolower.contains(low_query)
+            else:
+              matched = line.contains(query)
 
           if matched:
             counter += 1
@@ -119,8 +127,15 @@ proc get_results(query: string): seq[Result] =
 # Print the results
 proc print_results(results: seq[Result], duration: float) =
   let format = not conf().piped and not conf().clean
-  let query = escapeRe(conf().query)
-  let reg = re(&"(?i)({query})")
+  let query = conf().query
+  var reg = re("")
+
+  if query.len > 2 and query.startsWith("/") and query.endsWith("/"):
+    reg = re(query[1..^2])
+  else:
+    let q = escapeRe(query)
+    reg = re(&"(?i)({q})")
+
   var counter = 0
 
   for i, r in results:
