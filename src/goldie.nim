@@ -15,6 +15,8 @@ type
   Line = object
     text: string
     number: int
+    context_above: seq[string]
+    context_below: seq[string]
 
   # Object for results
   Result = object
@@ -98,7 +100,9 @@ proc get_results(query: string): seq[Result] =
         except:
           break on_path
 
-        for i, line in text.split("\n").pairs():
+        let all_lines = text.split("\n")
+
+        for i, line in all_lines.pairs():
           var matched = false
 
           if use_regex:
@@ -112,7 +116,22 @@ proc get_results(query: string): seq[Result] =
           if matched:
             counter += 1
             let text = line.strip.substr(0, max_line_length).strip
-            lines.add(Line(text: text, number: i + 1))
+            var the_line = Line(text: text, number: i + 1, context_above: @[], context_below: @[])
+
+            if conf().num_context > 0:
+              let min = max(0, i - conf().num_context)
+
+              if min != i:
+                for j in min..<i:
+                  the_line.context_above.add(all_lines[j])
+
+              let max = min(all_lines.len - 1, i + conf().num_context)
+
+              if max != i:
+                for j in i + 1..max:
+                  the_line.context_below.add(all_lines[j])
+
+            lines.add(the_line)
             if counter >= conf().max_results: break
 
         if lines.len > 0:
@@ -129,6 +148,7 @@ proc print_results(results: seq[Result], duration: float) =
   let format = not conf().piped and not conf().clean
   let query = conf().query
   var reg = re("")
+  let sep = "---"
 
   if query.len > 2 and query.startsWith("/") and query.endsWith("/"):
     reg = re(query[1..^2])
@@ -154,6 +174,12 @@ proc print_results(results: seq[Result], duration: float) =
 
     # Print lines
     for line in r.lines:
+      if line.context_above.len > 0:
+        echo sep
+
+        for item in line.context_above:
+          echo item
+
       let s = if format:
         var text = line.text
 
@@ -165,6 +191,12 @@ proc print_results(results: seq[Result], duration: float) =
         &"{line.number}: {line.text}"
 
       echo s
+
+      if line.context_below.len > 0:
+        for item in line.context_below:
+          echo item
+
+        echo sep
 
     counter += r.lines.len
 

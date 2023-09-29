@@ -25,6 +25,7 @@ type Config* = ref object
   clean*: bool
   highlight*: bool
   max_results*: int
+  num_context*: int
 
 var oconf*: Config
 
@@ -38,6 +39,7 @@ proc get_config*() =
     clean = add_arg(name="clean", kind="flag", help="Print a clean list without formatting", alt="c")
     no_highlight = add_arg(name="no-highlight", kind="flag", help="Don't highlight matches", alt="h")
     max_results = add_arg(name="max-results", kind="value", value="100", help="Max results to show", alt="m")
+    num_context = add_arg(name="num-context", kind="value", value="0", help="Show context above and below. Number of lines", alt="n")
 
   add_header("Search content of files recursively")
   add_header(&"Version: {version}")
@@ -53,7 +55,8 @@ proc get_config*() =
     case_insensitive: case_insensitive.used ,
     clean: clean.used,
     highlight: not no_highlight.used,
-    max_results: max_results.get_int
+    max_results: max_results.get_int,
+    num_context: num_context.get_int,
   )
 
 proc conf*(): Config =
