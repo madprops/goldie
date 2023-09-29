@@ -157,6 +157,9 @@ proc print_results(results: seq[Result], duration: float) =
 
   var counter = 0
 
+  proc highlight(text: string): string =
+    return nre.replace(text, reg, (r: string) => &"{reverse}{r}{reset}")
+
   for i, r in results:
     # Print header
     let rs = result_string(r.lines.len)
@@ -177,16 +180,20 @@ proc print_results(results: seq[Result], duration: float) =
         echo ""
 
         for item in line.context_above:
+          var text = item
+          if conf().highlight:
+            text = highlight(text)
+
           if format:
-            echo &"{green}B{reset}: {item}"
+            echo &"{blue}>>{reset} {text}"
           else:
-            echo &"B: {item}"
+            echo &"B: {text}"
 
       let s = if format:
         var text = line.text
 
         if conf().highlight:
-          text = nre.replace(text, reg, (r: string) => &"{reverse}{r}{reset}")
+          text = highlight(text)
 
         &"{yellow}{line.number}{reset}: {text}"
       else:
@@ -196,10 +203,14 @@ proc print_results(results: seq[Result], duration: float) =
 
       if line.context_below.len > 0:
         for item in line.context_below:
+          var text = item
+          if conf().highlight:
+            text = highlight(text)
+
           if format:
-            echo &"{green}A{reset}: {item}"
+            echo &"{blue}>>{reset} {text}"
           else:
-            echo &"A: {item}"
+            echo &"A: {text}"
 
     counter += r.lines.len
 
