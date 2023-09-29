@@ -177,7 +177,10 @@ proc print_results(results: seq[Result], duration: float) =
         echo ""
 
         for item in line.context_above:
-          echo item
+          if format:
+            echo &"{green}B{reset}: {item}"
+          else:
+            echo &"B: {item}"
 
       let s = if format:
         var text = line.text
@@ -193,7 +196,10 @@ proc print_results(results: seq[Result], duration: float) =
 
       if line.context_below.len > 0:
         for item in line.context_below:
-          echo item
+          if format:
+            echo &"{green}A{reset}: {item}"
+          else:
+            echo &"A: {item}"
 
     counter += r.lines.len
 
