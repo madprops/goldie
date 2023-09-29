@@ -148,7 +148,6 @@ proc print_results(results: seq[Result], duration: float) =
   let format = not conf().piped and not conf().clean
   let query = conf().query
   var reg = re("")
-  let sep = "---"
 
   if query.len > 2 and query.startsWith("/") and query.endsWith("/"):
     reg = re(query[1..^2])
@@ -175,7 +174,7 @@ proc print_results(results: seq[Result], duration: float) =
     # Print lines
     for line in r.lines:
       if line.context_above.len > 0:
-        echo sep
+        echo ""
 
         for item in line.context_above:
           echo item
@@ -195,8 +194,6 @@ proc print_results(results: seq[Result], duration: float) =
       if line.context_below.len > 0:
         for item in line.context_below:
           echo item
-
-        echo sep
 
     counter += r.lines.len
 
