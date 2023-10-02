@@ -16,3 +16,13 @@ mode
 tres
 mode
 cuatro
+
+  if (App.check_ready(`about`)) {
+    return
+  }
+
+
+
+hello1
+hello2
+hello3

@@ -38,6 +38,9 @@ proc valid_component(c: string): bool =
   c.contains(".min.")
   return not not_valid
 
+proc clean(text: string): string =
+  return text.substr(0, max_line_length)
+
 # Find files recursively and check text
 proc get_results(query: string): seq[Result] =
   let low_query = query.tolower
@@ -115,7 +118,7 @@ proc get_results(query: string): seq[Result] =
 
           if matched:
             counter += 1
-            let text = line.strip.substr(0, max_line_length).strip
+            let text = clean(line)
             var the_line = Line(text: text, number: i + 1, context_above: @[], context_below: @[])
 
             if conf().num_context > 0:
@@ -123,13 +126,13 @@ proc get_results(query: string): seq[Result] =
 
               if min != i:
                 for j in min..<i:
-                  the_line.context_above.add(all_lines[j])
+                  the_line.context_above.add(clean(all_lines[j]))
 
               let max = min(all_lines.len - 1, i + conf().num_context)
 
               if max != i:
                 for j in i + 1..max:
-                  the_line.context_below.add(all_lines[j])
+                  the_line.context_below.add(clean(all_lines[j]))
 
             lines.add(the_line)
             if counter >= conf().max_results: break
@@ -176,6 +179,13 @@ proc print_results(results: seq[Result], duration: float) =
 
     # Print lines
     for line in r.lines:
+      let numlen = max(0, intToStr(line.number).len)
+      var padding = ""
+
+      if numlen > 0:
+        for i in 1..numlen:
+          padding &= " "
+
       if line.context_above.len > 0:
         echo ""
 
@@ -185,9 +195,9 @@ proc print_results(results: seq[Result], duration: float) =
             text = highlight(text)
 
           if format:
-            echo &"{blue}>>{reset} {text}"
+            echo &"{blue}>>{reset}{padding}{text}"
           else:
-            echo &"B: {text}"
+            echo &">>{padding}{text}"
 
       let s = if format:
         var text = line.text
@@ -208,9 +218,9 @@ proc print_results(results: seq[Result], duration: float) =
             text = highlight(text)
 
           if format:
-            echo &"{blue}>>{reset} {text}"
+            echo &"{blue}>>{reset}{padding}{text}"
           else:
-            echo &"A: {text}"
+            echo &">>{padding}{text}"
 
     counter += r.lines.len
 
