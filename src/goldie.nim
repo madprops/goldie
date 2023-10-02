@@ -39,7 +39,10 @@ proc valid_component(c: string): bool =
   return not not_valid
 
 proc clean(text: string): string =
-  return text.substr(0, max_line_length)
+  if conf().num_context > 0:
+    return text.substr(0, max_line_length).strip(leading = false)
+  else:
+    return text.strip.substr(0, max_line_length).strip
 
 # Find files recursively and check text
 proc get_results(query: string): seq[Result] =
