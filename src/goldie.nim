@@ -39,7 +39,7 @@ proc valid_component(c: string): bool =
   return not not_valid
 
 proc clean(text: string): string =
-  if conf().num > 0 or conf().num_before > 0 or conf().num_after > 0:
+  if conf().context_before > 0 or conf().context_after > 0:
     return text.substr(0, max_line_length).strip(leading = false)
   else:
     return text.strip.substr(0, max_line_length).strip
@@ -124,15 +124,15 @@ proc get_results(query: string): seq[Result] =
             let text = clean(line)
             var the_line = Line(text: text, number: i + 1, context_above: @[], context_below: @[])
 
-            if conf().num > 0 or conf().num_before > 0:
-              let min = max(0, i - max(conf().num, conf().num_before))
+            if conf().context_before > 0:
+              let min = max(0, i - conf().context_before)
 
               if min != i:
                 for j in min..<i:
                   the_line.context_above.add(clean(all_lines[j]))
 
-            if conf().num > 0 or conf().num_after > 0:
-              let max = min(all_lines.len - 1, i + max(conf().num, conf().num_after))
+            if conf().context_after > 0:
+              let max = min(all_lines.len - 1, i + conf().context_after)
 
               if max != i:
                 for j in i + 1..max:

@@ -25,9 +25,9 @@ type Config* = ref object
   clean*: bool
   highlight*: bool
   max_results*: int
-  num*: int
-  num_before*: int
-  num_after*: int
+  context*: int
+  context_before*: int
+  context_after*: int
 
 var oconf*: Config
 
@@ -41,14 +41,16 @@ proc get_config*() =
     clean = add_arg(name="clean", kind="flag", help="Print a clean list without formatting", alt="c")
     no_highlight = add_arg(name="no-highlight", kind="flag", help="Don't highlight matches", alt="h")
     max_results = add_arg(name="max-results", kind="value", value="100", help="Max results to show", alt="m")
-    num = add_arg(name="num", kind="value", value="0", help="Show context above and below. Number of lines", alt="n")
-    num_before = add_arg(name="num-before", kind="value", value="0", help="Show context above. Number of lines", alt="1")
-    num_after = add_arg(name="num-after", kind="value", value="0", help="Show context below. Number of lines", alt="2")
+    context = add_arg(name="context", kind="value", value="0", help="Show context above and below. Number of lines", alt="x")
+    context_before = add_arg(name="context-before", kind="value", value="0", help="Show context above. Number of lines", alt="1")
+    context_after = add_arg(name="context-after", kind="value", value="0", help="Show context below. Number of lines", alt="2")
 
   add_header("Search content of files recursively")
   add_header(&"Version: {version}")
   add_note("Git Repo: https://github.com/madprops/goldie")
   parse_args()
+
+  let ctx = context.get_int
 
   oconf = Config(
     path: resolve_dir(path.value),
@@ -60,9 +62,8 @@ proc get_config*() =
     clean: clean.used,
     highlight: not no_highlight.used,
     max_results: max_results.get_int,
-    num: num.get_int,
-    num_before: num_before.get_int,
-    num_after: num_after.get_int,
+    context_before: max(ctx, context_before.get_int),
+    context_after: max(ctx, context_after.get_int),
   )
 
 proc conf*(): Config =
