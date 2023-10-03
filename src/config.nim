@@ -25,9 +25,9 @@ type Config* = ref object
   clean*: bool
   highlight*: bool
   max_results*: int
-  num_context*: int
-  num_context_before*: int
-  num_context_after*: int
+  num*: int
+  num_before*: int
+  num_after*: int
 
 var oconf*: Config
 
@@ -41,9 +41,9 @@ proc get_config*() =
     clean = add_arg(name="clean", kind="flag", help="Print a clean list without formatting", alt="c")
     no_highlight = add_arg(name="no-highlight", kind="flag", help="Don't highlight matches", alt="h")
     max_results = add_arg(name="max-results", kind="value", value="100", help="Max results to show", alt="m")
-    num_context = add_arg(name="num-context", kind="value", value="0", help="Show context above and below. Number of lines", alt="n")
-    num_context_before = add_arg(name="num-context-before", kind="value", value="0", help="Show context above. Number of lines", alt="1")
-    num_context_after = add_arg(name="num-context-after", kind="value", value="0", help="Show context below. Number of lines", alt="2")
+    num = add_arg(name="num", kind="value", value="0", help="Show context above and below. Number of lines", alt="n")
+    num_before = add_arg(name="num-before", kind="value", value="0", help="Show context above. Number of lines", alt="1")
+    num_after = add_arg(name="num-after", kind="value", value="0", help="Show context below. Number of lines", alt="2")
 
   add_header("Search content of files recursively")
   add_header(&"Version: {version}")
@@ -60,9 +60,9 @@ proc get_config*() =
     clean: clean.used,
     highlight: not no_highlight.used,
     max_results: max_results.get_int,
-    num_context: num_context.get_int,
-    num_context_before: num_context_before.get_int,
-    num_context_after: num_context_after.get_int,
+    num: num.get_int,
+    num_before: num_before.get_int,
+    num_after: num_after.get_int,
   )
 
 proc conf*(): Config =
