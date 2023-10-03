@@ -26,6 +26,8 @@ I made this because the tool I used failed to find stuff sometimes.
 
 ---
 
-Try `-x=5` for context.
+Try `-x=n` for context.
 
-Also `-1=5` and `-2=5` for above and below respectively.
+Also `-1=n` and `-2=n` for above and below respectively.
+
+![](https://i.imgur.com/BFGQ7M0.jpg)
