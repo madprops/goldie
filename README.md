@@ -23,3 +23,9 @@ Arguments that receive a value must be used with `=`.
 ---
 
 I made this because the tool I used failed to find stuff sometimes.
+
+---
+
+Try `-x=5` for context.
+
+Also `-1=5` and `-2=5` for above and below respectively.
