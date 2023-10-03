@@ -151,7 +151,7 @@ proc get_results(query: string): seq[Result] =
   return all_results
 
 # Print the results
-proc print_results(results: seq[Result], duration: float) =
+proc format_results(results: seq[Result], duration: float): seq[string] =
   let format = not conf().piped and not conf().clean
   let query = conf().query
   var reg = re("")
@@ -167,19 +167,21 @@ proc print_results(results: seq[Result], duration: float) =
   proc highlight(text: string): string =
     return nre.replace(text, reg, (r: string) => &"{reverse}{r}{reset}")
 
+  var lines: seq[string] = @[]
+
   for i, r in results:
     # Print header
     let rs = result_string(r.lines.len)
 
     let header = if format:
-      &"\n{bold}{green}{r.path}{reset}"
+      &"{bold}{green}{r.path}{reset}"
     else:
       if i == 0:
         r.path
       else:
-        &"\n{r.path}"
+        &"{r.path}"
 
-    echo header
+    lines.add(header)
 
     # Print lines
     for line in r.lines:
@@ -191,7 +193,7 @@ proc print_results(results: seq[Result], duration: float) =
           padding &= " "
 
       if line.context_above.len > 0:
-        echo ""
+        lines.add("")
 
         for item in line.context_above:
           var text = item
@@ -199,9 +201,9 @@ proc print_results(results: seq[Result], duration: float) =
             text = highlight(text)
 
           if format:
-            echo &"{blue}>>{reset}{padding}{text}"
+            lines.add(&"{blue}>>{reset}{padding}{text}")
           else:
-            echo &">>{padding}{text}"
+            lines.add(&">>{padding}{text}")
 
       let s = if format:
         var text = line.text
@@ -213,7 +215,7 @@ proc print_results(results: seq[Result], duration: float) =
       else:
         &"{line.number}: {line.text}"
 
-      echo s
+      lines.add(s)
 
       if line.context_below.len > 0:
         for item in line.context_below:
@@ -222,9 +224,11 @@ proc print_results(results: seq[Result], duration: float) =
             text = highlight(text)
 
           if format:
-            echo &"{blue}>>{reset}{padding}{text}"
+            lines.add(&"{blue}>>{reset}{padding}{text}")
           else:
-            echo &">>{padding}{text}"
+            lines.add(&">>{padding}{text}")
+
+        lines.add("")
 
     counter += r.lines.len
 
@@ -233,7 +237,25 @@ proc print_results(results: seq[Result], duration: float) =
     d = duration.formatFloat(ffDecimal, 2)
 
   if format:
-    echo &"\n{blue}Found {counter} {rs} in {d} ms{reset}\n"
+    lines.add("")
+    lines.add(&"{blue}Found {counter} {rs} in {d} ms{reset}")
+
+  return lines
+
+proc print_results(lines: seq[string]) =
+  var spaced = false
+  echo ""
+
+  for line in lines:
+    if line == "":
+      if not spaced:
+        echo line
+        spaced = true
+    else:
+      echo line
+      spaced = false
+
+  echo ""
 
 # Main function
 proc main() =
@@ -250,7 +272,7 @@ proc main() =
       duration = time_end - time_start
       ms = duration.inNanoSeconds.float / 1_000_000
 
-    print_results(results, ms)
+    print_results(format_results(results, ms))
 
 # Starts here
 when isMainModule:
