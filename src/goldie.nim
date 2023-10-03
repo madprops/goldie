@@ -243,10 +243,20 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
   return lines
 
 proc print_results(lines: seq[string]) =
+  var startx = 0
+  var endx = len(lines) - 1
+
+  while startx <= endx and lines[startx] == "":
+    inc(startx)
+
+  while endx >= startx and lines[endx] == "":
+    dec(endx)
+
+  let cleaned = lines[startx..endx]
   var spaced = false
   echo ""
 
-  for line in lines:
+  for line in cleaned:
     if line == "":
       if not spaced:
         echo line
