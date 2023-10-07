@@ -184,6 +184,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
       else:
         &"{r.path}"
 
+    space()
     lines.add(header)
 
     # Print lines
@@ -218,7 +219,6 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
       else:
         &"{line.number}: {line.text}"
 
-      space()
       lines.add(s)
 
       if line.context_below.len > 0:
