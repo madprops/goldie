@@ -163,11 +163,14 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
     reg = re(&"(?i)({q})")
 
   var counter = 0
+  var lines: seq[string] = @[]
 
   proc highlight(text: string): string =
     return nre.replace(text, reg, (r: string) => &"{reverse}{r}{reset}")
 
-  var lines: seq[string] = @[]
+  proc space() =
+    if not conf().no_spacing:
+      lines.add("")
 
   for i, r in results:
     # Print header
@@ -193,7 +196,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
           padding &= " "
 
       if line.context_above.len > 0:
-        lines.add("")
+        space()
 
         for item in line.context_above:
           var text = item
@@ -215,6 +218,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
       else:
         &"{line.number}: {line.text}"
 
+      space()
       lines.add(s)
 
       if line.context_below.len > 0:
@@ -228,7 +232,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
           else:
             lines.add(&">>{padding}{text}")
 
-        lines.add("")
+        space()
 
     counter += r.lines.len
 
@@ -237,7 +241,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
     d = duration.formatFloat(ffDecimal, 2)
 
   if format:
-    lines.add("")
+    space()
     lines.add(&"{blue}Found {counter} {rs} in {d} ms{reset}")
 
   return lines

@@ -28,6 +28,7 @@ type Config* = ref object
   context*: int
   context_before*: int
   context_after*: int
+  no_spacing*: bool
 
 var oconf*: Config
 
@@ -44,6 +45,7 @@ proc get_config*() =
     context = add_arg(name="context", kind="value", value="0", help="Show context above and below. Number of lines", alt="x")
     context_before = add_arg(name="context-before", kind="value", value="0", help="Show context above. Number of lines", alt="1")
     context_after = add_arg(name="context-after", kind="value", value="0", help="Show context below. Number of lines", alt="2")
+    no_spacing = add_arg(name="no-spacing", kind="flag", help="Don't add spacing between items", alt="s")
 
   add_header("Search content of files recursively")
   add_header(&"Version: {version}")
@@ -64,6 +66,7 @@ proc get_config*() =
     max_results: max_results.get_int,
     context_before: max(ctx, context_before.get_int),
     context_after: max(ctx, context_after.get_int),
+    no_spacing: no_spacing.used
   )
 
 proc conf*(): Config =
