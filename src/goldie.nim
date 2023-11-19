@@ -2,11 +2,11 @@ import std/[os, strutils, strformat, terminal, times, monotimes, nre, sugar]
 import config
 
 # Terminal ANSI Codes
-let blue = ansiForegroundColorCode(fgBlue)
-let green = ansiForegroundColorCode(fgGreen)
-let yellow = ansiForegroundColorCode(fgYellow)
-let reverse = ansiStyleCode(styleReverse)
-let bold = ansiStyleCode(styleBright)
+let blue = ansi_foreground_color_code(fgBlue)
+let green = ansi_foreground_color_code(fgGreen)
+let yellow = ansi_foreground_color_code(fgYellow)
+let reverse = ansi_style_code(styleReverse)
+let bold = ansi_style_code(styleBright)
 let reset = ansiResetCode
 let max_line_length = 200
 
@@ -32,7 +32,7 @@ proc valid_component(c: string): bool =
   let not_valid = c.starts_with(".") or
   c == "node_modules" or
   c == "package-lock.json" or
-  c.contains(".bundle.") or
+  c.contains("bundle.") or
   c.contains(".min.") or
   c.ends_with(".zip")
   return not not_valid
@@ -65,14 +65,15 @@ proc get_results(query: string): seq[Result] =
         if path.contains(e): return false
 
       for c in path.split("/"):
-        if not valid_component(c): return false
+        if not valid_component(c):
+          return false
 
       full_path = joinPath(conf().path, path)
 
     var info: FileInfo
 
     try:
-      info = getFileInfo(full_path)
+      info = get_file_info(full_path)
     except:
       return false
 
@@ -91,7 +92,7 @@ proc get_results(query: string): seq[Result] =
     for x in 0..<blen:
       bytes.add(0)
 
-    discard f.readBytes(bytes, 0, blen)
+    discard f.read_bytes(bytes, 0, blen)
 
     # Check if it's a binary file
     for c in bytes:
@@ -108,6 +109,10 @@ proc get_results(query: string): seq[Result] =
       return false
 
     let all_lines = text.split("\n")
+
+    proc add_results() =
+      let p = if conf().absolute: full_path else: path
+      all_results.add(Result(path: p, lines: lines))
 
     for i, line in all_lines.pairs():
       var matched = false
@@ -140,11 +145,13 @@ proc get_results(query: string): seq[Result] =
               the_line.context_below.add(clean(all_lines[j]))
 
         lines.add(the_line)
-        if counter >= conf().max_results: return true
+
+        if counter >= conf().max_results:
+          add_results()
+          return true
 
     if lines.len > 0:
-      let p = if conf().absolute: full_path else: path
-      all_results.add(Result(path: p, lines: lines))
+      add_results()
 
     # If results are full end the function
     if counter >= conf().max_results: return true
@@ -153,7 +160,7 @@ proc get_results(query: string): seq[Result] =
   if file_exists(conf().path):
     discard check(conf().path, "file")
   elif dir_exists(conf().path):
-    for path in walkDirRec(conf().path, relative = true):
+    for path in walk_dir_rec(conf().path, relative = true):
       if check(path, "directory"): break
   else:
     quit(1)
@@ -169,7 +176,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
   if query.len > 2 and query.starts_with("/") and query.ends_with("/"):
     reg = re(query[1..^2])
   else:
-    let q = escapeRe(query)
+    let q = escape_re(query)
     reg = re(&"(?i)({q})")
 
   var counter = 0
@@ -197,7 +204,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
 
     # Print lines
     for line in r.lines:
-      let numlen = max(0, intToStr(line.number).len)
+      let numlen = max(0, int_to_str(line.number).len)
       var padding = ""
 
       if numlen > 0:
@@ -246,7 +253,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
 
   let
     rs = result_string(counter)
-    d = duration.formatFloat(ffDecimal, 2)
+    d = duration.format_float(ffDecimal, 2)
 
   if format:
     space()
@@ -284,18 +291,18 @@ proc main() =
   get_config()
 
   let
-    time_start = getMonoTime()
+    time_start = get_mono_time()
     results = get_results(conf().query)
 
   # If any result
   if results.len > 0:
     let
-      time_end = getMonoTime()
+      time_end = get_mono_time()
       duration = time_end - time_start
-      ms = duration.inNanoSeconds.float / 1_000_000
+      ms = duration.in_nano_seconds.float / 1_000_000
 
     print_results(format_results(results, ms))
 
 # Starts here
-when isMainModule:
+when is_main_module:
   main()
