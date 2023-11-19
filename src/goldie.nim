@@ -32,10 +32,9 @@ proc valid_component(c: string): bool =
   let not_valid = c.startsWith(".") or
   c == "node_modules" or
   c == "package-lock.json" or
-  c == "LICENSE" or
-  c == "LICENSE.md" or
   c.contains(".bundle.") or
-  c.contains(".min.")
+  c.contains(".min.") or
+  c.endsWith(".zip")
   return not not_valid
 
 proc clean(text: string): string =
@@ -58,95 +57,106 @@ proc get_results(query: string): seq[Result] =
     all_results: seq[Result]
     counter = 0
 
-  block dirwalk:
+  proc check(path: string, kind: string): bool =
+    var full_path = path
+
+    if kind == "directory":
+      for e in conf().exclude:
+        if path.contains(e): return false
+
+      for c in path.split("/"):
+        if not valid_component(c): return false
+
+      full_path = joinPath(conf().path, path)
+
+    var info: FileInfo
+
+    try:
+      info = getFileInfo(full_path)
+    except:
+      return false
+
+    if info.size == 0: return false
+
+    var f: File
+
+    try:
+      f = open(full_path)
+    except:
+      return false
+
+    var bytes: seq[uint8]
+    let blen = min(info.size, 512)
+
+    for x in 0..<blen:
+      bytes.add(0)
+
+    discard f.readBytes(bytes, 0, blen)
+
+    # Check if it's a binary file
+    for c in bytes:
+      if c == 0:
+        return false
+
+    var
+      lines: seq[Line]
+      text: string
+
+    try:
+      text = readFile(full_path)
+    except:
+      return false
+
+    let all_lines = text.split("\n")
+
+    for i, line in all_lines.pairs():
+      var matched = false
+
+      if use_regex:
+        matched = nre.find(line, reg).isSome
+      else:
+        if conf().case_insensitive:
+          matched = line.tolower.contains(low_query)
+        else:
+          matched = line.contains(query)
+
+      if matched:
+        counter += 1
+        let text = clean(line)
+        var the_line = Line(text: text, number: i + 1, context_above: @[], context_below: @[])
+
+        if conf().context_before > 0:
+          let min = max(0, i - conf().context_before)
+
+          if min != i:
+            for j in min..<i:
+              the_line.context_above.add(clean(all_lines[j]))
+
+        if conf().context_after > 0:
+          let max = min(all_lines.len - 1, i + conf().context_after)
+
+          if max != i:
+            for j in i + 1..max:
+              the_line.context_below.add(clean(all_lines[j]))
+
+        lines.add(the_line)
+        if counter >= conf().max_results: return true
+
+    if lines.len > 0:
+      let p = if conf().absolute: full_path else: path
+      all_results.add(Result(path: p, lines: lines))
+
+    # If results are full end the function
+    if counter >= conf().max_results: return true
+    return false
+
+  if file_exists(conf().path):
+    discard check(conf().path, "file")
+  elif dir_exists(conf().path):
     for path in walkDirRec(conf().path, relative = true):
-      block on_path:
-        for e in conf().exclude:
-          if path.contains(e): break on_path
-
-        for c in path.split("/"):
-          if not valid_component(c): break on_path
-
-        let full_path = joinPath(conf().path, path)
-        var info: FileInfo
-
-        try:
-          info = getFileInfo(full_path)
-        except:
-          break on_path
-
-        if info.size == 0: break on_path
-
-        var f: File
-
-        try:
-          f = open(full_path)
-        except:
-          break on_path
-
-        var bytes: seq[uint8]
-        let blen = min(info.size, 512)
-
-        for x in 0..<blen:
-          bytes.add(0)
-
-        discard f.readBytes(bytes, 0, blen)
-
-        # Check if it's a binary file
-        for c in bytes:
-          if c == 0:
-            break on_path
-
-        var
-          lines: seq[Line]
-          text: string
-
-        try:
-          text = readFile(full_path)
-        except:
-          break on_path
-
-        let all_lines = text.split("\n")
-
-        for i, line in all_lines.pairs():
-          var matched = false
-
-          if use_regex:
-            matched = nre.find(line, reg).isSome
-          else:
-            if conf().case_insensitive:
-              matched = line.tolower.contains(low_query)
-            else:
-              matched = line.contains(query)
-
-          if matched:
-            counter += 1
-            let text = clean(line)
-            var the_line = Line(text: text, number: i + 1, context_above: @[], context_below: @[])
-
-            if conf().context_before > 0:
-              let min = max(0, i - conf().context_before)
-
-              if min != i:
-                for j in min..<i:
-                  the_line.context_above.add(clean(all_lines[j]))
-
-            if conf().context_after > 0:
-              let max = min(all_lines.len - 1, i + conf().context_after)
-
-              if max != i:
-                for j in i + 1..max:
-                  the_line.context_below.add(clean(all_lines[j]))
-
-            lines.add(the_line)
-            if counter >= conf().max_results: break
-
-        if lines.len > 0:
-          let p = if conf().absolute: full_path else: path
-          all_results.add(Result(path: p, lines: lines))
-
-        # If results are full end the function
-        if counter >= conf().max_results: break dirwalk
+      if check(path, "directory"): break
+  else:
+    quit(1)
 
   return all_results
 
@@ -174,8 +184,6 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
 
   for i, r in results:
     # Print header
-    let rs = result_string(r.lines.len)
-
     let header = if format:
       &"{bold}{green}{r.path}{reset}"
     else:

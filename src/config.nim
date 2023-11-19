@@ -1,17 +1,13 @@
 import std/[os, strformat, terminal]
 import pkg/[nap]
 
-let version = "0.1.0"
+let version = "0.2.0"
 
 proc resolve_dir(path: string): string =
   let rpath = if path == ".":
     getCurrentDir()
   else:
     expandTilde(path)
-
-  if not dirExists(rpath):
-    echo "Path does not exist."
-    quit(1)
 
   return rpath
 
