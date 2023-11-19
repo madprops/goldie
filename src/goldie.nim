@@ -29,12 +29,12 @@ proc result_string(n: int): string =
 
 # Check if the path component is valid
 proc valid_component(c: string): bool =
-  let not_valid = c.startsWith(".") or
+  let not_valid = c.starts_with(".") or
   c == "node_modules" or
   c == "package-lock.json" or
   c.contains(".bundle.") or
   c.contains(".min.") or
-  c.endsWith(".zip")
+  c.ends_with(".zip")
   return not not_valid
 
 proc clean(text: string): string =
@@ -49,7 +49,7 @@ proc get_results(query: string): seq[Result] =
   var use_regex = false
   var reg = re("")
 
-  if query.len > 2 and query.startsWith("/") and query.endsWith("/"):
+  if query.len > 2 and query.starts_with("/") and query.ends_with("/"):
     use_regex = true
     reg = re(query[1..^2])
 
@@ -166,7 +166,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
   let query = conf().query
   var reg = re("")
 
-  if query.len > 2 and query.startsWith("/") and query.endsWith("/"):
+  if query.len > 2 and query.starts_with("/") and query.ends_with("/"):
     reg = re(query[1..^2])
   else:
     let q = escapeRe(query)
