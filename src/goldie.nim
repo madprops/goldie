@@ -32,9 +32,12 @@ proc valid_component(c: string): bool =
   let not_valid = c.starts_with(".") or
   c == "node_modules" or
   c == "package-lock.json" or
+  c == "venv" or
+  c == "build" or
   c.contains("bundle.") or
   c.contains(".min.") or
-  c.ends_with(".zip")
+  c.ends_with(".zip") or
+  c.ends_with(".tar.gz")
   return not not_valid
 
 proc clean(text: string): string =
