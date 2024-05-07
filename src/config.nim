@@ -38,9 +38,9 @@ proc get_config*() =
     clean = add_arg(name="clean", kind="flag", help="Print a clean list without formatting", alt="c")
     no_highlight = add_arg(name="no-highlight", kind="flag", help="Don't highlight matches", alt="h")
     max_results = add_arg(name="max-results", kind="value", value="100", help="Max results to show", alt="m")
-    context = add_arg(name="context", kind="value", value="0", help="Show context above and below. Number of lines", alt="x")
-    context_before = add_arg(name="context-before", kind="value", value="0", help="Show context above. Number of lines", alt="1")
-    context_after = add_arg(name="context-after", kind="value", value="0", help="Show context below. Number of lines", alt="2")
+    context = add_arg(name="context", kind="value", value="0", help="Number of lines to show in between", alt="C")
+    context_before = add_arg(name="context-before", kind="value", value="0", help="Number of lines to show before", alt="B")
+    context_after = add_arg(name="context-after", kind="value", value="0", help="Number of lines to show after", alt="A")
     no_spacing = add_arg(name="no-spacing", kind="flag", help="Don't add spacing between items", alt="s")
 
   add_header("Search content of files recursively")
