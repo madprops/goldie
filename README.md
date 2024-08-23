@@ -1,6 +1,6 @@
 # Goldie
 
-Finds text in files recursively
+Find text in files recursively
 
 ![](goldie.jpg)
 
