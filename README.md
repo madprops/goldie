@@ -30,6 +30,4 @@ I made this because the tool I used failed to find stuff sometimes.
 
 Try `-C=n` for context.
 
-Also `-B=n` and `-A=n` for before and after respectively.
-
-![](https://i.imgur.com/BFGQ7M0.jpg)
+Use `-B=n` and `-A=n` for before and after respectively.
