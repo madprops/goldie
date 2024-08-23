@@ -72,7 +72,7 @@ It also ignores binary files.
 ```nim
 for c in bytes:
     if c == 0:
-    return false
+        return false
 ```
 
 ---
