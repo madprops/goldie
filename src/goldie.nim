@@ -8,6 +8,8 @@ let yellow = ansi_foreground_color_code(fgYellow)
 let reverse = ansi_style_code(styleReverse)
 let bold = ansi_style_code(styleBright)
 let reset = ansiResetCode
+
+# Other constants
 let max_line_length = 200
 
 type
@@ -40,6 +42,7 @@ proc valid_component(c: string): bool =
   c.ends_with(".tar.gz")
   return not not_valid
 
+# Clean text
 proc clean(text: string): string =
   if conf().context_before > 0 or conf().context_after > 0:
     return text.substr(0, max_line_length).strip(leading = false)
@@ -60,6 +63,7 @@ proc get_results(query: string): seq[Result] =
     all_results: seq[Result]
     counter = 0
 
+  # Check for matches
   proc check(path: string, kind: string): bool =
     var full_path = path
 
@@ -265,6 +269,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
 
   return lines
 
+# Print results
 proc print_results(lines: seq[string]) =
   var startx = 0
   var endx = len(lines) - 1
