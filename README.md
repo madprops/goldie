@@ -24,10 +24,10 @@ Arguments that receive a value must be used with `=`.
 
 ---
 
-I made this because the tool I used failed to find stuff sometimes.
-
----
-
 Try `-C=n` for context.
 
 Use `-B=n` and `-A=n` for before and after respectively.
+
+---
+
+I made this because the tool I used failed to find stuff sometimes.
