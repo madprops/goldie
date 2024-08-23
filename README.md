@@ -2,8 +2,6 @@
 
 Finds text in files, recursively. Simply provide a query.
 
-It's in the [AUR](https://aur.archlinux.org/packages/goldie-git).
-
 ![](https://i.imgur.com/p0Guav9.jpeg)
 
 ## Arguments
@@ -68,3 +66,7 @@ proc valid_component(c: string): bool =
   c.ends_with(".tar.gz")
   return not not_valid
 ```
+
+---
+
+It's in the [AUR](https://aur.archlinux.org/packages/goldie-git).
