@@ -1,6 +1,6 @@
 ![](goldie.jpg)
 
-Finds text in files, recursively. Simply provide a query.
+Finds text in files recursively. Simply provide a query.
 
 ![](https://i.imgur.com/p0Guav9.jpeg)
 
