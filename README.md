@@ -67,6 +67,14 @@ proc valid_component(c: string): bool =
   return not not_valid
 ```
 
+It also ignores binary files.
+
+```nim
+for c in bytes:
+    if c == 0:
+    return false
+```
+
 ---
 
 It's in the [AUR](https://aur.archlinux.org/packages/goldie-git).
