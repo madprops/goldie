@@ -47,16 +47,16 @@ Values:
   Number of lines to show after
 
   --ignore-exact
-  Add this component ignore rule (exact)
+  Add component ignore rule (exact)
 
   --ignore-contains
-  Add this component ignore rule (contains)
+  Add component ignore rule (contains)
 
   --ignore-starts
-  Add this component ignore rule (starts with)
+  Add component ignore rule (starts with)
 
   --ignore-ends
-  Add this component ignore rule (ends with)
+  Add component ignore rule (ends with)
 
 Arguments:
 
