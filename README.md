@@ -75,6 +75,14 @@ for c in bytes:
         return false
 ```
 
----
+## Running
 
-It's in the [AUR](https://aur.archlinux.org/packages/goldie-git).
+To run the debug version for testing you can use `run.sh`
+
+To compile a production binary you can do:
+
+```sh
+nim compile -d:release -o=bin/goldie "src/goldie.nim"
+```
+
+Or install through the [AUR](https://aur.archlinux.org/packages/goldie-git)
