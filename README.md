@@ -102,3 +102,11 @@ Plus it's fun to have a `nim` project.
 ## Contribute
 
 Code contributions for this project are welcome.
+
+Only restriction is that dependencies are not allowed.
+
+Library files should be included instead of declared in `goldie.nimble`
+
+For instance this uses the `nap` library which I wrote, which is used for arguments.
+
+And it resides in `src/nap`
