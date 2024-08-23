@@ -46,6 +46,18 @@ Values:
   --context-after (or -A)
   Number of lines to show after
 
+  --ignore-exact
+  Add this path ignore rule (exact)
+
+  --ignore-contains
+  Add this path ignore rule (contains)
+
+  --ignore-starts
+  Add this path ignore rule (starts with)
+
+  --ignore-ends
+  Add this path ignore rule (ends with)
+
 Arguments:
 
   query (Required)

@@ -1,7 +1,7 @@
 import std/[os, strformat, terminal]
 import ./nap/nap
 
-let version = "0.5.0"
+let version = "0.6.0"
 
 proc resolve_dir(path: string): string =
   let rpath = if path == ".":
@@ -25,6 +25,10 @@ type Config* = ref object
   context_before*: int
   context_after*: int
   no_spacing*: bool
+  ignore_exact*: seq[string]
+  ignore_contains*: seq[string]
+  ignore_starts*: seq[string]
+  ignore_ends*: seq[string]
 
 var oconf*: Config
 
@@ -42,6 +46,10 @@ proc get_config*() =
     context_before = add_arg(name="context-before", kind="value", value="0", help="Number of lines to show before", alt="B")
     context_after = add_arg(name="context-after", kind="value", value="0", help="Number of lines to show after", alt="A")
     no_spacing = add_arg(name="no-spacing", kind="flag", help="Don't add spacing between items", alt="s")
+    ignore_exact = add_arg(name="ignore-exact", kind="value", multiple=true, help="Add this path ignore rule (exact)")
+    ignore_contains = add_arg(name="ignore-contains", kind="value", multiple=true, help="Add this path ignore rule (contains)")
+    ignore_starts = add_arg(name="ignore-starts", kind="value", multiple=true, help="Add this path ignore rule (starts with)")
+    ignore_ends = add_arg(name="ignore-ends", kind="value", multiple=true, help="Add this path ignore rule (ends with)")
 
   add_header("Search content of files recursively")
   add_header(&"Version: {version}")
@@ -62,7 +70,11 @@ proc get_config*() =
     max_results: max_results.get_int,
     context_before: max(ctx, context_before.get_int),
     context_after: max(ctx, context_after.get_int),
-    no_spacing: no_spacing.used
+    no_spacing: no_spacing.used,
+    ignore_exact: ignore_exact.values,
+    ignore_contains: ignore_contains.values,
+    ignore_starts: ignore_starts.values,
+    ignore_ends: ignore_ends.values,
   )
 
 proc conf*(): Config =

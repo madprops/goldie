@@ -29,17 +29,35 @@ type
 proc result_string(n: int): string =
   return if n == 1: "result" else: "results"
 
+# Check ignore rules
+proc check_ignore(c: string): bool =
+  for e in conf().ignore_exact:
+    if c == e: return true
+
+  for e in conf().ignore_contains:
+    if c.contains(e): return true
+
+  for e in conf().ignore_starts:
+    if c.starts_with(e): return true
+
+  for e in conf().ignore_ends:
+    if c.ends_with(e): return true
+
+  return false
+
 # Check if the path component is valid
 proc valid_component(c: string): bool =
-  let not_valid = c.starts_with(".") or
+  let not_valid = check_ignore(c) or
   c == "node_modules" or
   c == "package-lock.json" or
   c == "venv" or
   c == "build" or
   c.contains("bundle.") or
   c.contains(".min.") or
+  c.starts_with(".") or
   c.ends_with(".zip") or
   c.ends_with(".tar.gz")
+
   return not not_valid
 
 # Clean text
