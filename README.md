@@ -10,9 +10,9 @@ It's in the [AUR](https://aur.archlinux.org/packages/goldie-git).
 
 ---
 
-It's opiniated and ignores some files:
+It's opinionated and ignores some files:
 
-![](https://i.imgur.com/d3eZaTJ.jpg)
+![](https://i.imgur.com/VV7DzjT.jpg)
 
 ---
 
@@ -28,8 +28,8 @@ I made this because the tool I used failed to find stuff sometimes.
 
 ---
 
-Try `-x=n` for context.
+Try `-C=n` for context.
 
-Also `-1=n` and `-2=n` for above and below respectively.
+Also `-B=n` and `-A=n` for before and after respectively.
 
 ![](https://i.imgur.com/BFGQ7M0.jpg)
