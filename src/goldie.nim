@@ -131,7 +131,9 @@ proc get_results(query: string): seq[Result] =
       if matched:
         counter += 1
         let text = clean(line)
-        var the_line = Line(text: text, number: i + 1, context_above: @[], context_below: @[])
+
+        var the_line = Line(text: text, number: i + 1, context_above: @[],
+            context_below: @[])
 
         if conf().context_before > 0:
           let min = max(0, i - conf().context_before)
@@ -197,10 +199,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
     let header = if format:
       &"{bold}{green}{r.path}{reset}"
     else:
-      if i == 0:
-        r.path
-      else:
-        &"{r.path}"
+      r.path
 
     space()
     lines.add(header)
@@ -219,6 +218,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
 
         for item in line.context_above:
           var text = item
+
           if conf().highlight:
             text = highlight(text)
 
@@ -242,6 +242,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
       if line.context_below.len > 0:
         for item in line.context_below:
           var text = item
+
           if conf().highlight:
             text = highlight(text)
 
