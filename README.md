@@ -1,3 +1,5 @@
+![](goldie.jpg)
+
 Finds text in files, recursively. Simply provide a query.
 
 It's in the [AUR](https://aur.archlinux.org/packages/goldie-git).
