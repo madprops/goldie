@@ -85,4 +85,6 @@ To compile a production binary you can do:
 nim compile -d:release -o=bin/goldie "src/goldie.nim"
 ```
 
+Then place that binary somewhere in your path.
+
 Or install through the [AUR](https://aur.archlinux.org/packages/goldie-git)
