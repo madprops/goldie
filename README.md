@@ -78,16 +78,20 @@ They are checked to see if they should be ignored.
 By default it ignores files and directories you likely don't need.
 
 ```nim
+# Exact
 c == "node_modules" or
 c == "package-lock.json" or
 c == "venv" or
 c == "build" or
 
+# Contains
 c.contains("bundle.") or
 c.contains(".min.") or
 
+# Starts
 c.starts_with(".") or
 
+# Ends
 c.ends_with(".zip") or
 c.ends_with(".tar.gz")
 ```
