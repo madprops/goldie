@@ -132,9 +132,9 @@ Plus it's fun to have a `nim` project.
 
 ## Contribute
 
-Code contributions for this project are welcome.
+Code contributions are welcome to this project.
 
-Only restriction is that dependencies are not allowed.
+The only restriction is that dependencies are not allowed.
 
 Library files should be included instead of declared in `goldie.nimble`
 
