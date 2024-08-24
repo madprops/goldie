@@ -64,7 +64,15 @@ Arguments:
   Text query to match
 ```
 
-## Ignored Files
+## Ignored Components
+
+Components are each part of a path.
+
+`/these/are/components`
+
+They are checked to see if they should be ignored.
+
+By default it ignores files and directories you likely don't need.
 
 ```nim
 c == "node_modules" or
@@ -80,6 +88,8 @@ c.starts_with(".") or
 c.ends_with(".zip") or
 c.ends_with(".tar.gz")
 ```
+
+These should be updated over time by the dev(s).
 
 You can add more rules through arguments.
 
