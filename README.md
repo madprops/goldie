@@ -122,11 +122,11 @@ Then place that binary somewhere in your path.
 
 Or install through the [AUR](https://aur.archlinux.org/packages/goldie-git)
 
-## Why
+## Why This
 
 I made this because the search tool I used failed to find results sometimes.
 
-Yes I can just use `ripgrep` instead. But I can modifiy this to my needs.
+Yes, I could just use `ripgrep` instead. But I can modifiy this to my needs.
 
 Plus it's fun to have a `nim` project.
 
