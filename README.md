@@ -126,7 +126,7 @@ Or install through the [AUR](https://aur.archlinux.org/packages/goldie-git)
 
 I made this because the search tool I used failed to find results sometimes.
 
-Yes, I could just use `ripgrep` instead. But I can modifiy this to my needs.
+I could just use `ripgrep` instead, but I can modify this for my needs.
 
 Plus it's fun to have a `nim` project.
 
