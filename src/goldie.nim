@@ -45,22 +45,36 @@ proc check_ignore(c: string): bool =
 
   return false
 
-# Check if the path component is valid
-proc valid_component(c: string): bool =
-  let not_valid = check_ignore(c) or
+# Check ignore defaults
+proc check_ignore_defaults(c: string): bool =
+  if not conf().ignore_defaults:
+    return false
 
+  return false or
+
+  # Exact
   c == "node_modules" or
   c == "package-lock.json" or
   c == "venv" or
   c == "build" or
 
+  # Contains
   c.contains("bundle.") or
   c.contains(".min.") or
 
+  # Starts
   c.starts_with(".") or
 
+  # Ends
   c.ends_with(".zip") or
   c.ends_with(".tar.gz")
+
+# Check if the path component is valid
+proc valid_component(c: string): bool =
+  let not_valid = false or
+
+  check_ignore(c) or
+  check_ignore_defaults(c)
 
   return not not_valid
 
