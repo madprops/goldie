@@ -26,6 +26,9 @@ Flags:
   --no-spacing (or -s)
   Don't add spacing between items
 
+  --no-ignore-defaults
+  Don't use the default ignore-component-rules
+
 Values:
 
   --path (or -p)
@@ -47,16 +50,16 @@ Values:
   Number of lines to show after
 
   --ignore-exact
-  Add component ignore rule (exact)
+  Add ignore-component-rule (exact)
 
   --ignore-contains
-  Add component ignore rule (contains)
+  Add ignore-component-rule (contains)
 
   --ignore-starts
-  Add component ignore rule (starts with)
+  Add ignore-component-rule (starts with)
 
   --ignore-ends
-  Add component ignore rule (ends with)
+  Add ignore-component-rule (ends with)
 
 Arguments:
 
