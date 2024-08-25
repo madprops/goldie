@@ -81,6 +81,7 @@ By default it ignores files and directories you likely don't need.
 # Exact
 c == "node_modules" or
 c == "package-lock.json" or
+c == "env" or
 c == "venv" or
 c == "build" or
 
