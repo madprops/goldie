@@ -68,7 +68,9 @@ proc check_ignore_defaults(c: string): bool =
 
   # Ends
   c.ends_with(".zip") or
-  c.ends_with(".tar.gz")
+  c.ends_with(".tar.gz") or
+
+  false
 
 # Check if the path component is valid
 proc valid_component(c: string): bool =
