@@ -1,7 +1,7 @@
 import std/[os, strformat, terminal]
 import ./nap/nap
 
-let version = "0.6.9"
+let version = "0.7.0"
 
 proc resolve_dir(path: string): string =
   let rpath = if path == ".":
