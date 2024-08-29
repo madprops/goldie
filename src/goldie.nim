@@ -31,23 +31,23 @@ proc result_string(n: int): string =
 
 # Check ignore rules
 proc check_ignore(c: string): bool =
-  for e in conf().ignore_exact:
+  for e in conf.ignore_exact:
     if c == e: return true
 
-  for e in conf().ignore_contains:
+  for e in conf.ignore_contains:
     if c.contains(e): return true
 
-  for e in conf().ignore_starts:
+  for e in conf.ignore_starts:
     if c.starts_with(e): return true
 
-  for e in conf().ignore_ends:
+  for e in conf.ignore_ends:
     if c.ends_with(e): return true
 
   return false
 
 # Check ignore defaults
 proc check_ignore_defaults(c: string): bool =
-  if not conf().ignore_defaults:
+  if not conf.ignore_defaults:
     return false
 
   return false or
@@ -83,7 +83,7 @@ proc valid_component(c: string): bool =
 
 # Clean text
 proc clean(text: string): string =
-  if conf().context_before > 0 or conf().context_after > 0:
+  if conf.context_before > 0 or conf.context_after > 0:
     return text.substr(0, max_line_length).strip(leading = false)
   else:
     return text.strip.substr(0, max_line_length).strip
@@ -107,14 +107,14 @@ proc get_results(query: string): seq[Result] =
     var full_path = path
 
     if kind == "directory":
-      for e in conf().exclude:
+      for e in conf.exclude:
         if path.contains(e): return false
 
       for c in path.split("/"):
         if not valid_component(c):
           return false
 
-      full_path = joinPath(conf().path, path)
+      full_path = joinPath(conf.path, path)
 
     var info: FileInfo
 
@@ -157,7 +157,7 @@ proc get_results(query: string): seq[Result] =
     let all_lines = text.split("\n")
 
     proc add_results() =
-      let p = if conf().absolute: full_path else: path
+      let p = if conf.absolute: full_path else: path
       all_results.add(Result(path: p, lines: lines))
 
     for i, line in all_lines.pairs():
@@ -166,7 +166,7 @@ proc get_results(query: string): seq[Result] =
       if use_regex:
         matched = nre.find(line, reg).isSome
       else:
-        if conf().case_insensitive:
+        if conf.case_insensitive:
           matched = line.tolower.contains(low_query)
         else:
           matched = line.contains(query)
@@ -178,15 +178,15 @@ proc get_results(query: string): seq[Result] =
         var the_line = Line(text: text, number: i + 1, context_above: @[],
             context_below: @[])
 
-        if conf().context_before > 0:
-          let min = max(0, i - conf().context_before)
+        if conf.context_before > 0:
+          let min = max(0, i - conf.context_before)
 
           if min != i:
             for j in min..<i:
               the_line.context_above.add(clean(all_lines[j]))
 
-        if conf().context_after > 0:
-          let max = min(all_lines.len - 1, i + conf().context_after)
+        if conf.context_after > 0:
+          let max = min(all_lines.len - 1, i + conf.context_after)
 
           if max != i:
             for j in i + 1..max:
@@ -194,7 +194,7 @@ proc get_results(query: string): seq[Result] =
 
         lines.add(the_line)
 
-        if counter >= conf().max_results:
+        if counter >= conf.max_results:
           add_results()
           return true
 
@@ -202,13 +202,13 @@ proc get_results(query: string): seq[Result] =
       add_results()
 
     # If results are full end the function
-    if counter >= conf().max_results: return true
+    if counter >= conf.max_results: return true
     return false
 
-  if file_exists(conf().path):
-    discard check(conf().path, "file")
-  elif dir_exists(conf().path):
-    for path in walk_dir_rec(conf().path, relative = true):
+  if file_exists(conf.path):
+    discard check(conf.path, "file")
+  elif dir_exists(conf.path):
+    for path in walk_dir_rec(conf.path, relative = true):
       if check(path, "directory"): break
   else:
     quit(1)
@@ -217,8 +217,8 @@ proc get_results(query: string): seq[Result] =
 
 # Print the results
 proc format_results(results: seq[Result], duration: float): seq[string] =
-  let format = not conf().piped and not conf().clean
-  let query = conf().query
+  let format = not conf.piped and not conf.clean
+  let query = conf.query
   var reg = re("")
 
   if query.len > 2 and query.starts_with("/") and query.ends_with("/"):
@@ -234,7 +234,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
     return nre.replace(text, reg, (r: string) => &"{reverse}{r}{reset}")
 
   proc space() =
-    if not conf().no_spacing:
+    if not conf.no_spacing:
       lines.add("")
 
   for i, r in results:
@@ -262,7 +262,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
         for item in line.context_above:
           var text = item
 
-          if conf().highlight:
+          if conf.highlight:
             text = highlight(text)
 
           if format:
@@ -273,7 +273,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
       let s = if format:
         var text = line.text
 
-        if conf().highlight:
+        if conf.highlight:
           text = highlight(text)
 
         &"{yellow}{line.number}{reset}: {text}"
@@ -286,7 +286,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
         for item in line.context_below:
           var text = item
 
-          if conf().highlight:
+          if conf.highlight:
             text = highlight(text)
 
           if format:
@@ -340,7 +340,7 @@ proc main() =
 
   let
     time_start = get_mono_time()
-    results = get_results(conf().query)
+    results = get_results(conf.query)
 
   # If any result
   if results.len > 0:

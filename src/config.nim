@@ -31,7 +31,7 @@ type Config* = ref object
   ignore_ends*: seq[string]
   ignore_defaults*: bool
 
-var oconf*: Config
+var conf*: Config
 
 proc get_config*() =
   let
@@ -60,7 +60,7 @@ proc get_config*() =
 
   let ctx = context.get_int
 
-  oconf = Config(
+  conf = Config(
     path: resolve_dir(path.value),
     piped: not isatty(stdout),
     query: query.value,
@@ -79,6 +79,3 @@ proc get_config*() =
     ignore_ends: ignore_ends.values,
     ignore_defaults: not no_ignore_defaults.used,
   )
-
-proc conf*(): Config =
-  return oconf
