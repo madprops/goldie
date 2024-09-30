@@ -246,6 +246,7 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
 
     space()
     lines.add(header)
+    counter += r.lines.len
 
     if conf.only_files:
       lines.add(&"{r.lines.len} matches")
@@ -299,8 +300,6 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
             lines.add(&">>{padding}{text}")
 
         space()
-
-    counter += r.lines.len
 
   let
     rs = result_string(counter)
