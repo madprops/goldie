@@ -29,6 +29,9 @@ Flags:
   --no-ignore-defaults
   Don't use the default ignore-component-rules
 
+  --only-files
+  Only show the file names and the number of matches
+
 Values:
 
   --path (or -p)

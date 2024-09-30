@@ -1,7 +1,7 @@
 import std/[os, strformat, terminal]
 import ./nap/nap
 
-let version = "0.7.0"
+let version = "0.8.0"
 
 proc resolve_dir(path: string): string =
   let rpath = if path == ".":
@@ -30,6 +30,7 @@ type Config* = ref object
   ignore_starts*: seq[string]
   ignore_ends*: seq[string]
   ignore_defaults*: bool
+  only_files*: bool
 
 var conf*: Config
 
@@ -52,6 +53,7 @@ proc get_config*() =
     ignore_starts = add_arg(name="ignore-starts", kind="value", multiple=true, help="Add ignore-component-rule (starts with)")
     ignore_ends = add_arg(name="ignore-ends", kind="value", multiple=true, help="Add ignore-component-rule (ends with)")
     no_ignore_defaults = add_arg(name="no-ignore-defaults", kind="flag", help="Don't use the default ignore-component-rules")
+    only_files = add_arg(name="only-files", kind="flag", help="Only print the file names")
 
   add_header("Search content of files recursively")
   add_header(&"Version: {version}")
@@ -78,4 +80,5 @@ proc get_config*() =
     ignore_starts: ignore_starts.values,
     ignore_ends: ignore_ends.values,
     ignore_defaults: not no_ignore_defaults.used,
+    only_files: only_files.used
   )

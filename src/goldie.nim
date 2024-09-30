@@ -247,6 +247,10 @@ proc format_results(results: seq[Result], duration: float): seq[string] =
     space()
     lines.add(header)
 
+    if conf.only_files:
+      lines.add(&"{r.lines.len} matches")
+      continue
+
     # Print lines
     for line in r.lines:
       let numlen = max(0, int_to_str(line.number).len)
