@@ -114,7 +114,7 @@ for c in bytes:
 
 ## Running
 
-To run the debug version for testing you can use `run.sh`
+To run the debug version for testing you can use `run.sh`.
 
 To compile a production binary you can do:
 
@@ -140,8 +140,8 @@ Code contributions are welcome to this project.
 
 The only restriction is that dependencies are not allowed.
 
-Library files should be included instead of declared in `goldie.nimble`
+Library files should be included instead of declared in `goldie.nimble`.
 
 For instance this uses the `nap` library which I wrote, which is used for arguments.
 
-And it resides in `src/nap`
+And it resides in `src/nap`.
