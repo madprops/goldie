@@ -87,6 +87,8 @@ c == "package-lock.json" or
 c == "env" or
 c == "venv" or
 c == "build" or
+c == "LICENSE" or
+c == "LICENSE.md" or
 
 # Contains
 c.contains("bundle.") or
