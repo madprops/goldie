@@ -71,6 +71,7 @@ proc check_ignore_defaults(c: string): bool =
   # Ends
   c.ends_with(".zip") or
   c.ends_with(".tar.gz") or
+  c.ends_with(".js.map") or
 
   false
 
