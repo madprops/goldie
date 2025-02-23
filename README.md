@@ -81,30 +81,30 @@ They are checked to see if they should be ignored.
 By default it ignores files and directories you likely don't need.
 
 ```nim
-  return false or
+return false or
 
-  # Exact
-  c == "node_modules" or
-  c == "package-lock.json" or
-  c == "env" or
-  c == "venv" or
-  c == "build" or
-  c == "LICENSE" or
-  c == "LICENSE.md" or
+# Exact
+c == "node_modules" or
+c == "package-lock.json" or
+c == "env" or
+c == "venv" or
+c == "build" or
+c == "LICENSE" or
+c == "LICENSE.md" or
 
-  # Contains
-  c.contains("bundle.") or
-  c.contains(".min.") or
+# Contains
+c.contains("bundle.") or
+c.contains(".min.") or
 
-  # Starts
-  c.starts_with(".") or
+# Starts
+c.starts_with(".") or
 
-  # Ends
-  c.ends_with(".zip") or
-  c.ends_with(".tar.gz") or
-  c.ends_with(".js.map") or
+# Ends
+c.ends_with(".zip") or
+c.ends_with(".tar.gz") or
+c.ends_with(".js.map") or
 
-  false
+false
 ```
 
 These should be updated over time by the dev(s).
