@@ -96,10 +96,22 @@ proc get_results(query: string): seq[Result] =
   let low_query = query.tolower
   var use_regex = false
   var reg = re("")
+  var pattern = ""
+  var multiline_regex = false
+  var regex_join_limit = 0
 
-  if query.len > 2 and query.starts_with("/") and query.ends_with("/"):
+  if (query.len > 2) and query.starts_with("/") and query.ends_with("/"):
     use_regex = true
-    reg = re(query[1..^2])
+    pattern = query[1..^2]
+    reg = re(pattern)
+
+    let newline_escapes = pattern.count("\\n")
+    let newline_literals = pattern.count("\n")
+    let newline_total = newline_escapes + newline_literals
+
+    if newline_total > 0:
+      multiline_regex = true
+      regex_join_limit = newline_total + 5
 
   var
     all_results: seq[Result]
@@ -158,16 +170,38 @@ proc get_results(query: string): seq[Result] =
       return false
 
     let all_lines = text.split("\n")
+    var skip_until = -1
 
     proc add_results() =
       let p = if conf.absolute: full_path else: path
       all_results.add(Result(path: p, lines: lines))
 
     for i, line in all_lines.pairs():
+      if i <= skip_until:
+        continue
+
       var matched = false
+      var line_index = i
 
       if use_regex:
-        matched = nre.find(line, reg).isSome
+        if multiline_regex:
+          var segment = line
+          var j = i
+
+          matched = nre.find(segment, reg).isSome
+
+          while not matched and (j < all_lines.high) and ((j - i) < regex_join_limit):
+            inc(j)
+            segment &= "\n" & all_lines[j]
+            matched = nre.find(segment, reg).isSome
+
+          if matched:
+            line_index = j
+
+            if line_index > i:
+              skip_until = max(skip_until, line_index - 1)
+        else:
+          matched = nre.find(line, reg).isSome
       else:
         if conf.case_insensitive:
           matched = line.tolower.contains(low_query)
@@ -176,23 +210,23 @@ proc get_results(query: string): seq[Result] =
 
       if matched:
         counter += 1
-        let text = clean(line)
+        let text = clean(all_lines[line_index])
 
-        var the_line = Line(text: text, number: i + 1, context_above: @[],
+        var the_line = Line(text: text, number: line_index + 1, context_above: @[],
             context_below: @[])
 
         if conf.context_before > 0:
-          let min = max(0, i - conf.context_before)
+          let min = max(0, line_index - conf.context_before)
 
-          if min != i:
-            for j in min..<i:
+          if min != line_index:
+            for j in min..<line_index:
               the_line.context_above.add(clean(all_lines[j]))
 
         if conf.context_after > 0:
-          let max = min(all_lines.len - 1, i + conf.context_after)
+          let max = min(all_lines.len - 1, line_index + conf.context_after)
 
-          if max != i:
-            for j in i + 1..max:
+          if max != line_index:
+            for j in line_index + 1..max:
               the_line.context_below.add(clean(all_lines[j]))
 
         lines.add(the_line)
