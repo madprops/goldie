@@ -24,6 +24,12 @@
             pname = "goldie";
             version = "unstable";
             src = ./.;
+            buildInputs = [
+              pkgs.pcre
+            ];
+            nimFlags = [
+              "-d:usePcre"
+            ];
           };
         });
 
@@ -35,6 +41,7 @@
             packages = [
               pkgs.nim
               pkgs.nimble
+              pkgs.pcre
             ];
           };
         });
